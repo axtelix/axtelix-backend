@@ -5,8 +5,8 @@ import os
 import time  # <--- Añadido para romper el caché
 
 app = Flask(__name__)
-# Esto permite que tu HTML (frontend) hable con este Python (backend) sin bloqueos
-CORS(app)
+# Ajuste de CORS para permitir la conexión desde tu tienda en GitHub Pages
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # 1. TU NUEVA URL DE GOOGLE APPS SCRIPT (Actualizada)
 GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwN-y6WGRGDy-LxHU9ix_tqNwrtc781lTEXt-KTDDr8_IFC9l6S2osWaEM5emHDul3R/exec"

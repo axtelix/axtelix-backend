@@ -1,0 +1,1952 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Axtelix | Premium Store</title>
+    <link rel="icon" type="image/x-icon" href="logo-wp.jpeg">
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Axtelix | Premium Store">
+    <meta property="og:description" content="Tu tienda premium de perfumería y accesorios. Calidad garantizada.">
+    <meta property="og:image" content="https://axtelix-oficial.github.io/Axtelix/logo-wp.jpeg">
+    <meta property="og:url" content="https://axtelix-oficial.github.io/Axtelix/">
+    <meta name="twitter:card" content="summary_large_image">
+
+
+    <style>
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: #0a0a0a;
+            color: #ffffff;
+            font-family: 'Helvetica', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        #social-proof {
+    position: fixed;
+    bottom: 20px;
+    left: -300px; /* Escondido al inicio */
+    background: rgba(20, 20, 20, 0.9);
+    border-left: 4px solid #d4af37;
+    color: white;
+    padding: 12px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    z-index: 9999;
+    transition: left 0.5s ease-in-out;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+
+        /* Estado Agotado */
+        .product-card.sold-out {
+            opacity: 0.7;
+            filter: grayscale(0.8);
+            pointer-events: none; /* Evita que sigan dando clic */
+        }
+
+        .badge-agotado {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 100;
+            background: #444; /* Gris oscuro para diferenciar de la oferta roja */
+            color: white;
+            padding: 4px 10px;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            transform: skewX(7deg); /* Para que el texto se vea derecho en la tarjeta ladeada */
+        }
+
+        /* Estilo del botón cuando está agotado */
+        .product-card.sold-out .btn-add-cart {
+            background-color: #333 !important;
+            color: #777 !important;
+            cursor: not-allowed;
+        }
+
+
+        /* Clase para ocultar productos en el buscador */
+        .product-card.hidden {
+            display: none !important;
+        }
+
+
+        /* --- SMART LIFE GEAR (AHORA DEBAJO DE AXTELIX) --- */
+        .slogan-animado {
+            font-size: 0.7em;
+            color: #888;
+            letter-spacing: 2px;
+            display: block; /* Cambiado a block para estar debajo */
+            margin-top: 5px;
+            transition: all 0.5s ease;
+            cursor: default;
+        }
+
+        .slogan-animado:hover {
+            letter-spacing: 6px;
+            color: #d4af37;
+        }
+
+        .slogan-animado span {
+            display: inline-block;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slogan-animado:hover span {
+            animation: salto-giro-completo 0.8s ease forwards, 
+                       parpadeo-contorno 1s infinite alternate;
+        }
+
+        @keyframes salto-giro-completo {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(180deg); }
+            100% { transform: translateY(0) rotate(360deg); }
+        }
+
+        @keyframes parpadeo-contorno {
+            from { text-shadow: 0 0 2px #fff, 0 0 5px #d4af37; }
+            to { text-shadow: 0 0 8px #d4af37, 0 0 15px #d4af37; }
+        }
+
+        header {
+            padding: 40px 20px 10px 20px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        header h1 {
+            display: inline-block;
+            margin: 0;
+            padding: 5px 30px;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            letter-spacing: 5px;
+            border-radius: 50px;
+            position: relative;
+        }
+
+        header h1:hover {
+            letter-spacing: 15px; 
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.8);
+            color: #d4af37;
+            animation: glow-pulse 1.5s infinite;
+        }
+
+        @keyframes glow-pulse {
+            0% { box-shadow: 0 0 10px rgba(212, 175, 55, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(212, 175, 55, 0.9); }
+            100% { box-shadow: 0 0 10px rgba(212, 175, 55, 0.4); }
+        }
+
+        /* --- BUSCADOR CON LUPA FELIZ --- */
+        .search-wrapper {
+            max-width: 400px;
+            margin: 20px auto;
+            position: relative;
+            padding: 0 20px;
+        }
+
+        #productSearch {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 25px;
+            border: 1px solid #333;
+            background: #1a1a1a;
+            color: white;
+            outline: none;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #productSearch:focus { 
+            border-color: #d4af37;
+            letter-spacing: 1px;
+        }
+
+        .lupa-emoji {
+            position: absolute;
+            right: 35px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        /* Animación de la lupa al dar click */
+        .lupa-feliz {
+            animation: salto-giro-lupa 0.7s ease-out forwards;
+        }
+
+        @keyframes salto-giro-lupa {
+            0% { transform: translateY(-50%) scale(1) rotate(0deg); }
+            30% { transform: translateY(-100%) scale(1.5) rotate(0deg); }
+            100% { transform: translateY(-50%) scale(1) rotate(360deg); }
+        }
+
+        /* --- CARRITO Y BOTONES DENTRO DEL MODAL --- */
+        .cupon-wrapper:hover {
+            border-color: #d4af37;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+            transition: 0.3s;
+        }
+
+        .btn-cupon:hover {
+            animation: parpadeo-contorno 1s infinite alternate;
+        }
+
+        .btn-whatsapp-cart {
+            background: #25d366;
+            color: white;
+            width: 100%;
+            padding: 15px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            letter-spacing: 0px;
+        }
+
+        /* Efecto de letras separadas y brillo suave */
+        .btn-whatsapp-cart:hover {
+            letter-spacing: 2px;
+            background: #20ba5a;
+            box-shadow: 0 0 15px rgba(37, 211, 102, 0.5);
+            border-color: #fff;
+        }
+
+
+        /* Estilos para botones en mantenimiento */
+.btn-mantenimiento {
+    background: #e0e0e0 !important;
+    color: #888 !important;
+    cursor: not-allowed !important;
+    position: relative;
+    pointer-events: none; /* Evita que hagan clic */
+}
+
+.badge-mantenimiento {
+    position: absolute;
+    top: -8px;
+    right: 10px;
+    background: #ff4444;
+    color: white;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Diseño de tarjeta bancaria profesional */
+.banco-card {
+    background: #f8f9fa;
+    border: 1.5px dashed #ccc;
+    border-radius: 15px;
+    padding: 15px;
+    margin-top: 10px;
+    text-align: left;
+}
+
+.banco-dato {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.banco-valor {
+    font-family: monospace;
+    font-size: 15px;
+    font-weight: bold;
+    color: #111;
+}
+
+
+
+        /* --- CATEGORÍAS Y PRODUCTOS --- */
+        .category-title {
+            text-align: center;
+            letter-spacing: 3px;
+            margin-top: 40px;
+            color: #d4af37;
+            text-transform: uppercase;
+            font-size: 1.1em;
+            transition: all 0.4s ease;
+            cursor: default;
+        }
+
+        .category-title:hover {
+            letter-spacing: 8px;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        .cart-icon-fixed {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #d4af37;
+            color: black;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .cart-pop {
+            animation: pop-animation 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: #ffffff !important; 
+        }
+
+        @keyframes pop-animation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.6); box-shadow: 0 0 40px #d4af37; }
+            100% { transform: scale(1); }
+        }
+
+
+        @media (max-width: 768px) {
+    .container {
+        overflow-x: auto; 
+        /* 'mandatory' obliga a que el scroll se detenga en un producto sí o sí */
+        scroll-snap-type: x mandatory; 
+        -webkit-overflow-scrolling: touch; 
+        gap: 15px;
+        padding: 10px;
+        /* IMPORTANTE: El contenedor debe tener el scroll oculto si usas flechas, 
+           o auto si quieres que usen el dedo */
+    }
+
+    @media (max-width: 768px) {
+    .product-card {
+        /* Subimos del 85% al 92% para que ocupe casi toda la pantalla */
+        flex: 0 0 92% !important; 
+        min-width: 92% !important;
+        
+        /* Asegúrate de que el margen no las empuje */
+        margin: 0 auto; 
+        
+        scroll-snap-align: center;
+        scroll-snap-stop: always;
+    }
+}
+    
+    .arrow-btn {
+        display: none; /* En móvil es mejor usar el dedo, pero si las dejas, 
+                          el JS que te pasé antes hará el salto exacto */
+    }
+}
+
+
+/* Esto hace que el efecto funcione con el mouse Y TAMBIÉN con la clase .active */
+
+/* El Borde Dorado */
+.product-card.active::before, 
+.product-card:hover::before {
+    clip-path: inset(0 0 0 0) !important;
+}
+
+/* La Imagen (Color y brillo) */
+.product-card.active img,
+.product-card:hover img {
+    filter: grayscale(0%) brightness(100%) !important;
+}
+
+/* El texto o botón (si quieres que cambie) */
+.product-card.active .btn-add-cart {
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+}
+
+
+        .slider-wrapper {
+            position: relative;
+            width: 90%;
+            max-width: 1100px;
+            margin: 0 auto 40px auto;
+            display: flex;
+            align-items: center;
+        }
+
+        .container {
+            display: flex;
+            overflow-x: hidden;
+            gap: 20px;
+            padding: 20px 0;
+            width: 100%;
+        }
+
+        /* 1. Contenedor: Solo 3 productos visibles con buen espacio */
+        .product-grid {
+            display: flex;
+            gap: 80px; /* Mucho espacio para que no se peguen los rayos */
+            justify-content: center;
+            padding: 60px 20px;
+        }
+
+        /* 1. LA TARJETA: Le quitamos el clip-path y el overflow:hidden */
+        .product-card {
+            flex: 0 0 300px;
+            height: 520px; /* Dale un poco más de altura para que quepa todo abajo */
+            position: relative;
+            background: transparent; /* Para que el fondo no tape nada */
+            overflow: visible; /* IMPORTANTE: para que la oferta y botones se vean */
+            transition: all 0.5s ease;
+        }
+
+        /* 1.1 EL BORDE DORADO DE CARGA */
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border: 2px solid #f1c40f;
+            z-index: 10;
+            pointer-events: none;
+            clip-path: inset(0 100% 100% 0);
+            transition: clip-path 0.7s ease-in-out;
+        }
+
+        .product-card:hover::before {
+            clip-path: inset(0 0 0 0);
+        }
+
+        .product-card:hover img {
+            filter: grayscale(0%) brightness(100%);
+        }
+
+        /* 2. LA IMAGEN: Aquí es donde aplicamos el recorte de Rayo */
+        .product-card img {
+            width: 100%;
+            height: 300px; /* Ajusta la altura de la foto */
+            object-fit: cover;
+            /* Movemos el recorte de rayo solo a la foto */
+            clip-path: polygon(0% 0%, 100% 0%, 100% 80%, 50% 100%, 0% 80%);
+            filter: grayscale(100%) brightness(30%);
+            transition: all 0.6s ease;
+        }
+
+        .product-card:hover img {
+            filter: grayscale(0%) brightness(100%);
+        }
+
+        /* 3. MOVER LA OFERTA PARA QUE NO TAPE EL NOMBRE */
+        .badge-oferta {
+            position: absolute;
+            top: -10px; /* Súbela arriba de la foto */
+            left: 10px;
+            z-index: 50; 
+            background: #ff4d4d;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            color: white;
+        }
+
+        /* 4. BOTÓN Y DETALLES: Asegúrate que no tengan posición absoluta rara */
+        .product-info {
+            padding-top: 15px; /* Espacio después del rayo de la foto */
+            text-align: center;
+        }
+
+        .añadir-carrito {
+            display: block;
+            margin: 10px auto;
+            background: white;
+            color: black;
+            padding: 8px 15px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .product-info h3 {
+            font-size: 0.9rem;
+            color: #f1c40f; /* Dorado para el nombre */
+        }
+
+        /* --- AJUSTE FINAL PARA MÓVIL (TODO CENTRADO Y ADAPTADO) --- */
+@media (max-width: 768px) {
+    /* 1. PRODUCTOS: Recuadros centrados */
+    .product-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 25px !important;
+        padding: 10px 0 !important;
+        overflow-x: hidden !important;
+    }
+
+    .product-card {
+        width: 90% !important; 
+        flex: none !important;
+        margin: 0 auto !important;
+    }
+
+    /* 2. CHECKOUT: Centrado y con márgenes iguales */
+    #capa-checkout {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        padding: 0 !important;
+    }
+
+    #capa-checkout > div {
+        width: 90% !important; /* Margen igual en ambos lados */
+        margin: 0 auto !important;
+        padding: 20px 15px !important;
+        max-height: 88vh !important;
+        overflow-y: auto !important;
+        border-radius: 20px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Inputs y botones del Checkout */
+    #capa-checkout input, #capa-checkout textarea, #btn-next-step, #btn-wsp, #btn-descargar-img {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        font-size: 16px !important;
+    }
+
+    /* 3. MANTENIMIENTO: El arreglo para que se vea igual de los dos lados */
+    #aviso-mantenimiento {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        z-index: 20000000 !important;
+    }
+
+    #aviso-mantenimiento > div {
+        width: 85% !important; /* Se adapta al centro con márgenes iguales */
+        max-width: 350px !important;
+        margin: 0 auto !important; /* Esto asegura que se vea igual de los dos lados */
+        padding: 30px 20px !important;
+        border-radius: 24px !important;
+        box-sizing: border-box !important;
+        text-align: center !important;
+    }
+}
+
+        .badge-oferta {
+            position: absolute;
+            /* 1. Súbela más para que salga del área del nombre */
+            top: -15px; 
+    
+            /* 2. Muévela a la izquierda o derecha según prefieras */
+            left: 10px; 
+    
+            /* 3. Asegúrate de que nada la tape */
+            z-index: 100; 
+    
+            /* Opcional: un sombreado para que resalte en el fondo negro */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    
+            /* Estilo visual rápido */
+            background-color: #ff4d4d;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .price { color: #d4af37; font-size: 1.2em; font-weight: bold; display: block; margin-bottom: 10px; }
+        
+        .old-price {
+            text-decoration: line-through;
+            color: #666;
+            font-size: 0.8em;
+            margin-right: 8px;
+        }
+
+        .btn-add-cart {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #ffffff;
+            color: #000;
+            font-weight: bold;
+            font-size: 0.75em;
+            text-transform: uppercase;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+        }
+
+
+        .estrella-ambiente {
+    position: absolute;
+    pointer-events: none; /* Para que no interfieran con los clics */
+    z-index: -1; /* Detrás de todo */
+    opacity: 0;
+    color: #FFD700; /* Color dorado brillante para las estrellas */
+    font-size: 1.5rem; /* Tamaño inicial */
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.7); /* Brillo alrededor */
+    transition: opacity 2s ease-in-out, transform 2s ease-in-out;
+    user-select: none;
+    line-height: 1; /* Para que no ocupe mucho espacio vertical */
+}
+
+/* Animación de una estrella que aparece, flota y se desvanece */
+@keyframes estrellaFlotante {
+    0% {
+        opacity: 0;
+        transform: translate(0, 0) scale(0.5) rotate(0deg);
+    }
+    30% {
+        opacity: 0.7; /* Se ve más al inicio */
+    }
+    70% {
+        opacity: 0.4;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(var(--float-x), var(--float-y)) scale(1.5) rotate(360deg);
+    }
+}
+
+
+
+        .btn-add-cart:active {
+            transform: scale(0.95);
+            background-color: #d4af37;
+        }
+
+        .btn-details {
+            background: transparent;
+            color: #888;
+            border: none;
+            text-decoration: underline;
+            font-size: 0.8em;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        /* 1. Animación de parpadeo que NUNCA se detiene */
+@keyframes breathing {
+    0%, 100% {
+        opacity: 0.2;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05); /* Un pulso muy sutil */
+    }
+}
+
+.arrow-btn {
+    background: transparent;
+    color: #d4af37;
+    border: none;
+    font-size: 4.5rem; /* Un poco más grandes como pediste */
+    font-weight: 100;
+    cursor: pointer;
+    z-index: 100;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+    
+    /* La animación se mantiene SIEMPRE activa */
+    animation: breathing 2.5s infinite ease-in-out;
+    
+    /* Transición suave para cuando le piques */
+    transition: transform 0.1s ease, color 0.1s ease;
+}
+
+/* 2. EFECTO DE HUNDIDO (Cuando le picas) */
+/* El !important asegura que le gane a la animación de parpadeo por un momento */
+.arrow-btn:active {
+    transform: scale(0.85) !important; /* Se hace pequeña (se hunde) */
+    color: #fff !important; /* Destello blanco al presionar */
+    opacity: 1 !important;
+}
+
+/* 3. Evitamos que el hover detenga la animación */
+.arrow-btn:hover {
+    /* Quitamos el play-state: paused para que siga parpadeando mientras decides */
+    color: #d4af37; 
+}
+
+/* Posicionamiento */
+.arrow-btn.prev { left: -5px; }
+.arrow-btn.next { right: -5px; }
+
+        .trust-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 40px 20px;
+            background: #0f0f0f;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .trust-item { flex: 1; min-width: 200px; padding: 20px; }
+        .trust-item h4 { color: #d4af37; font-size: 0.9em; margin-bottom: 10px; }
+        .trust-item p { color: #888; font-size: 0.8em; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.95);
+        }
+
+        .modal-content {
+            background-color: #1a1a1a;
+            margin: 5% auto;
+            padding: 30px;
+            width: 85%;
+            max-width: 600px;
+            border-radius: 12px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid #333;
+            line-height: 1.6;
+        }
+
+        /* Fuerza a que el botón de detalles esté siempre al frente y sea clickeable */
+        .Detalles, [onclick*="abrirModal"], [onclick*="detalles"] {
+            position: relative !important;
+            z-index: 2147483647 !important; /* El máximo nivel posible */
+            pointer-events: auto !important;
+            cursor: pointer !important;
+            display: inline-block !important;
+        }
+
+        /* Evita que el contenedor padre bloquee los clics al hijo */
+        .product-card.sold-out, .product-item.agotado {
+            pointer-events: auto !important; 
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        /* Este es el nombre del producto */
+        .cart-item span:first-child {
+            color: #ffffff; /* Blanco para el nombre */
+            flex: 1;
+        }
+
+        /* Este es el precio (el segundo span) */
+        .cart-item span:nth-child(2) {
+            color: #f1c40f; /* El dorado de tu marca */
+            font-weight: bold;
+            margin-right: 15px; /* Espacio antes de la X roja */
+            min-width: 70px;
+            text-align: right;
+        }
+
+        /* El nombre ocupará todo el espacio disponible */
+        .cart-item span:first-child {
+            flex-grow: 1;
+            text-align: left;
+            font-size: 0.95em;
+        }
+
+        /* El precio tendrá un ancho fijo para que todos los $ se alineen igual */
+        .cart-item span:nth-child(2) {
+            min-width: 80px; 
+            text-align: right;
+            font-weight: bold;
+            color: #d8e616; /* Dorado Axtelix */
+        }
+
+        .legal-link { color: #555; text-decoration: underline; cursor: pointer; font-size: 0.8em; margin: 0 10px; }
+
+        .cupon-wrapper {
+            margin: 15px 0;
+            padding: 15px;
+            background: #111;
+            border-radius: 8px;
+            border: 1px dashed #444;
+            transition: all 0.3s;
+        }
+        .cupon-input-group {
+            display: flex;
+            gap: 10px;
+        }
+        #input-cupon {
+            flex: 1;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #333;
+            background: #000;
+            color: white;
+        }
+        .btn-cupon {
+            background: #d4af37;
+            color: black;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+
+        /* Pantalla de carga AXTELIX */
+#loader-axtelix {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #0a0a0a; /* Fondo minimalista oscuro */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.8s ease;
+}
+
+.letras-contenedor {
+    display: flex;
+    gap: 10px;
+}
+
+.letra {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+    animation: jugar 1.5s infinite alternate;
+}
+
+/* --- CONTENEDOR PRINCIPAL --- */
+#loader-axtelix {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000; /* Prioridad máxima */
+    overflow: hidden;
+}
+
+
+
+/* --- FONDO DE METEORITOS --- */
+.fondo-espacial {
+    position: absolute;
+    width: 100%; height: 100%;
+    z-index: 1;
+}
+
+.meteorito {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 3px; height: 3px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 15px #00d4ff, 0 0 30px #00d4ff;
+    opacity: 0;
+    animation: lluvia-meteoritos var(--duracion) infinite linear var(--retraso);
+}
+
+@keyframes lluvia-meteoritos {
+    0% { transform: rotate(var(--angulo)) translateX(0) scaleX(1); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: rotate(var(--angulo)) translateX(1200px) scaleX(30); opacity: 0; }
+}
+
+/* --- CONTENIDO CENTRAL --- */
+.letras-contenedor {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 250px;
+}
+
+.logo-central {
+    width: 180px;
+    height: auto;
+    mix-blend-mode: screen; 
+    filter: brightness(1.2) contrast(1.4) drop-shadow(0 0 30px rgba(0, 212, 255, 0.8));
+    -webkit-mask-image: radial-gradient(circle, black 45%, transparent 80%);
+    mask-image: radial-gradient(circle, black 45%, transparent 80%);
+    animation: giro-motor 4s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.letra {
+    position: absolute;
+    font-size: 5rem;
+    font-weight: 800;
+    color: #fff;
+    opacity: 0;
+    animation: disparo-con-flash 4s infinite;
+}
+
+@keyframes disparo-con-flash {
+    0% { transform: translateX(0) scale(0.3); opacity: 0; color: #00d4ff; filter: blur(20px); }
+    10% { opacity: 1; color: #fff; text-shadow: 0 0 20px #fff, 0 0 50px #00d4ff; }
+    85% { opacity: 1; transform: var(--destino) scale(1); }
+    100% { opacity: 0; transform: var(--destino) scale(0.8); }
+}
+
+/* --- TEXTOS Y CARGA --- */
+.lema-axtelix {
+    margin-top: 20px;
+    color: #00d4ff;
+    letter-spacing: 12px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    z-index: 10;
+}
+
+.carga-contenedor {
+    margin-top: 35px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+}
+
+.texto-cargando {
+    color: #00d4ff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+    animation: parpadeo-texto 1.5s infinite;
+}
+
+.barra-fondo {
+    width: 220px;
+    height: 5px;
+    background: rgba(0, 212, 255, 0.1);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.barra-progreso {
+    width: 0%;
+    height: 100%;
+    background: #00d4ff;
+    box-shadow: 0 0 15px #00d4ff;
+    animation: progreso-sincro 4s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes progreso-sincro {
+    0% { width: 0%; background: #00d4ff; }
+    80% { width: 100%; background: #00d4ff; }
+    85% { width: 100%; background: #fff; box-shadow: 0 0 25px #fff; }
+    100% { width: 100%; opacity: 0; }
+}
+
+@keyframes giro-motor {
+    0%, 100% { transform: rotate(0deg) scale(1.1); }
+    50% { transform: rotate(360deg) scale(1.1); }
+}
+
+@keyframes parpadeo-texto {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* MÓVIL */
+@media (max-width: 600px) {
+    .logo-central { width: 110px; }
+    .letra { font-size: 2.5rem; }
+    .letra-a { --destino: translateX(-140px) !important; }
+    .letra-x { --destino: translateX(-100px) !important; }
+    .letra-t { --destino: translateX(-60px) !important; }
+    .letra-l { --destino: translateX(60px) !important; }
+    .letra-i { --destino: translateX(100px) !important; }
+    .letra-x2 { --destino: translateX(140px) !important; }
+    .barra-fondo { width: 150px; }
+}     
+    </style>
+</head>
+<body>
+
+    <div id="loader-axtelix">
+    <div class="fondo-espacial">
+        <div class="meteorito" style="--angulo: 20deg; --duracion: 1.2s; --retraso: 0s;"></div>
+        <div class="meteorito" style="--angulo: 110deg; --duracion: 1.5s; --retraso: 0.3s;"></div>
+        <div class="meteorito" style="--angulo: 210deg; --duracion: 1.1s; --retraso: 0.6s;"></div>
+        <div class="meteorito" style="--angulo: 300deg; --duracion: 1.8s; --retraso: 0.2s;"></div>
+        <div class="meteorito" style="--angulo: 55deg; --duracion: 1.4s; --retraso: 0.5s;"></div>
+    </div>
+
+    <div class="letras-contenedor">
+        <span class="letra letra-a" style="--destino: translateX(-320px); animation-delay: 0.9s;">A</span>
+        <span class="letra letra-x" style="--destino: translateX(-230px); animation-delay: 0.6s;">X</span>
+        <span class="letra letra-t" style="--destino: translateX(-140px); animation-delay: 0.3s;">T</span>
+        <img src="logo2-wp.jpg" alt="AXTELIX" class="logo-central">
+        <span class="letra letra-l" style="--destino: translateX(140px); animation-delay: 0.3s;">L</span>
+        <span class="letra letra-i" style="--destino: translateX(230px); animation-delay: 0.6s;">I</span>
+        <span class="letra letra-x2" style="--destino: translateX(320px); animation-delay: 0.9s;">X</span>
+    </div>
+
+    <p class="lema-axtelix">Smart Life Gear</p>
+
+    <div class="carga-contenedor">
+        <span class="texto-cargando">CARGANDO SISTEMA...</span>
+        <div class="barra-fondo"><div class="barra-progreso"></div></div>
+    </div>
+</div>
+
+
+
+    <div class="cart-icon-fixed" id="cart-icon" onclick="openModal('cartModal')">
+        🛒 <span id="cart-count">0</span>
+    </div>
+    
+
+    <header>
+        <h1>Axtelix</h1>
+        <p class="slogan-animado">
+            <span>S</span><span>M</span><span>A</span><span>R</span><span>T</span>&nbsp;
+            <span>L</span><span>I</span><span>F</span><span>E</span>&nbsp;
+            <span>G</span><span>E</span><span>A</span><span>R</span>
+        </p>
+    </header>
+
+    <div class="search-wrapper">
+        <input type="text" id="productSearch" placeholder="Buscar en el catálogo..." onkeyup="filterProducts()" onclick="animarLupa()">
+        <span class="lupa-emoji" id="lupa">🔍</span>
+    </div>
+    
+    <h3 class="category-title">Perfumería</h3>
+    <div class="slider-wrapper">
+        <button class="arrow-btn prev" onclick="scrollSlider('container-perfumes', -1)">&#10094;</button>
+        <div class="container" id="container-perfumes"></div>
+        <button class="arrow-btn next" onclick="scrollSlider('container-perfumes', 1)">&#10095;</button>
+    </div>
+    
+    <h3 class="category-title">Tecnología</h3>
+    <div class="slider-wrapper">
+        <button class="arrow-btn prev" onclick="scrollSlider('container-tech', -1)">&#10094;</button>
+        <div class="container" id="container-tech"></div>
+        <button class="arrow-btn next" onclick="scrollSlider('container-tech', 1)">&#10095;</button>
+    </div>
+
+    <h3 class="category-title">Calzado</h3>
+    <div class="slider-wrapper">
+        <button class="arrow-btn prev" onclick="scrollSlider('container-shoes', -1)">&#10094;</button>
+        <div class="container" id="container-shoes"></div>
+        <button class="arrow-btn next" onclick="scrollSlider('container-shoes', 1)">&#10095;</button>
+    </div>
+
+    <h3 class="category-title">SOFTWARE</h3>
+    <div class="slider-wrapper">
+        <button class="arrow-btn prev" onclick="scrollSlider('container-web', -1)">&#10094;</button>
+        <div class="container" id="container-web"></div>
+        <button class="arrow-btn next" onclick="scrollSlider('container-web', 1)">&#10095;</button>
+    </div>
+
+    <div class="trust-section">
+        <div class="trust-item">
+            <h4>🚚 ENVÍOS</h4>
+            <p>De 5 a 7 días hábiles a todo México.</p>
+        </div>
+        <div class="trust-item">
+            <h4>💳 PAGOS</h4>
+            <p>Transferencias, Depósitos y Tarjetas vía WhatsApp.</p>
+        </div>
+        <div class="trust-item">
+            <h4>⭐ CONFIANZA</h4>
+            <p>Garantía de entrega y productos de alta calidad.</p>
+        </div>
+        <div class="trust-item">
+            <h4>📱 ATENCIÓN</h4>
+            <p>Soporte de lunes - viernes 9:00AM - 6:00PM Y sabados de 12:00PM - 7:00PM vía WhatsApp.</p>
+        </div>
+    </div>
+
+    <footer style="padding: 40px 20px; text-align: center;">
+        <p>
+            <span class="legal-link" onclick="openModal('legalModal')">Términos y Condiciones</span> |
+            <span class="legal-link" onclick="openModal('aboutModal')">Quiénes Somos</span> |
+            <span class="legal-link" onclick="openModal('payModal')">Formas de Pago</span>
+        </p>
+        <p style="font-size: 0.7em; color:#444;">© 2026 AXTELIX STORE</p>
+    </footer>
+
+    <div id="cartModal" class="modal">
+    <div class="modal-content">
+        <span style="float:right; cursor:pointer;" onclick="closeModal('cartModal')">✖</span>
+        <h2>Mi Pedido</h2>
+        <div id="cart-items-container"></div>
+        
+        <div class="cupon-wrapper">
+            <p style="font-size: 0.8em; margin-bottom: 5px; color: #aaa;">¿Tienes un cupón?</p>
+            <div class="cupon-input-group">
+                <input type="text" id="input-cupon" placeholder="Código">
+                <button class="btn-cupon" onclick="aplicarCupon()">Canjear</button>
+            </div>
+            <p id="mensaje-cupon" style="font-size: 0.7em; margin-top: 5px;"></p>
+        </div>
+
+        <hr style="border:1px solid #333; margin:15px 0;">
+        
+        <div style="display:flex; justify-content:space-between; font-weight:bold; align-items: center;">
+            <span>Total:</span>
+            <div>
+                <span id="precio-viejo" style="color: #ff4444; text-decoration: line-through; font-size: 0.9em; margin-right: 10px; display: none;"></span>
+                <span id="cart-total" style="font-size: 1.2em;">$0</span>
+            </div>
+        </div>
+
+        <button class="btn-whatsapp-cart" onclick="sendWhatsApp()" style="margin-top: 10px;">Confirmar por WhatsApp</button>
+
+        <div id="pasarela-pago-axtelix" style="margin-top: 20px; border-top: 1px solid #333; padding-top: 15px;">
+            <div style="background: #111; padding: 20px; border-radius: 15px; border: 1px solid #333; margin-top: 15px; font-family: sans-serif;">
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #222;">
+                    <span style="color: #888; font-size: 0.9rem; font-weight: bold; text-transform: uppercase;">Pago Directo:</span>
+                    <span id="total-carrito" style="color: #ffcc00; font-size: 1.8rem; font-weight: 800;">$0</span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button onclick="pagoDirecto('mercado')" style="background: #009ee3; color: white; border: none; padding: 14px; border-radius: 10px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center;">
+                        <img src="https://img.icons8.com/color/48/000000/mercado-pago.png" width="20" style="margin-right: 10px;"> Mercado Pago
+                    </button>
+                    <button onclick="pagoDirecto('paypal')" style="background: #ffc439; color: #003087; border: none; padding: 14px; border-radius: 10px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center;">
+                        <img src="https://img.icons8.com/color/48/000000/paypal.png" width="20" style="margin-right: 10px;"> PayPal
+                    </button>
+                    <button onclick="pagoDirecto('transferencia')" style="background: #222; color: #eee; border: 1px solid #444; padding: 14px; border-radius: 10px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center;">
+                        <img src="https://img.icons8.com/color/48/000000/bank.png" width="20" style="margin-right: 10px;"> Transferencia
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="legalModal" class="modal">
+    <div class="modal-content">
+        <span style="float:right; cursor:pointer; font-weight:bold; color: #d4af37;" onclick="closeModal('legalModal')">✖</span>
+        <h2 style="color: #d4af37; margin-bottom: 15px;">Términos y Condiciones</h2>
+        <div style="text-align: left; font-size: 14px; line-height: 1.6; color: #eee; max-height: 60vh; overflow-y: auto;">
+            <p><b>1. Naturaleza del Servicio:</b> Axtelix opera bajo un modelo de <b>Dropshipping</b>. Al comprar, reconoces que somos intermediarios entre proveedores internacionales y tú.</p>
+            <p><b>2. Envíos:</b> Tiempo estimado de 5 a 7 días hábiles. Puede extenderse en casos excepcionales ajenos a nuestra logística.</p>
+            <p><b>3. Precios:</b> Todos nuestros precios están expresados en <b>MXN</b>. Las ofertas y promociones son por tiempo limitado.</p>
+            <p><b>4. Devoluciones:</b> Solo se aplican por defectos de fábrica reportados en las primeras <b>48 horas</b> tras recibir el producto.</p>
+            <p><b>5. Facturación:</b> Para requerir facturas fiscales, es necesario contactar vía WhatsApp antes de realizar el pago.</p>
+        </div>
+    </div>
+</div>
+
+<div id="aboutModal" class="modal">
+    <div class="modal-content">
+        <span style="float:right; cursor:pointer; font-weight:bold; color: #d4af37;" onclick="closeModal('aboutModal')">✖</span>
+        <h2 style="color: #d4af37; margin-bottom: 15px;">Quiénes Somos</h2>
+        <p style="text-align: justify; color: #eee; line-height: 1.6;">
+            Bienvenido a <b>Axtelix</b>, más que una tienda, somos sus aliados en la búsqueda de la distinción. 
+            Nuestra misión es simplificar el acceso a lo extraordinario, seleccionando cuidadosamente cada pieza de nuestra colección de perfumería fina, tecnología de vanguardia y calzado de edición especial. 
+            Nos mueve la pasión por los detalles y el compromiso de acompañarle en cada paso de su elección.
+        </p>
+    </div>
+</div>
+
+<div id="payModal" class="modal">
+    <div class="modal-content">
+        <span style="float:right; cursor:pointer; font-weight:bold; color: #d4af37;" onclick="closeModal('payModal')">✖</span>
+        <h2 style="color: #d4af37; margin-bottom: 15px;">Formas de Pago</h2>
+        <div style="text-align: left; color: #eee; line-height: 2;">
+            <p>• <b style="color: #d4af37;">PayPal</b> (Crédito/Débito)</p>
+            <p>• <b style="color: #d4af37;">Transferencia Bancaria</b> (SPEI)</p>
+            <p>• <b style="color: #d4af37;">Depósito en OXXO</b></p>
+            <p>• <b style="color: #d4af37;">Mercado Pago / Clip</b></p>
+        </div>
+    </div>
+</div>
+
+<div id="detailsModal" class="modal">
+    <div class="modal-content">
+        <span style="float:right; cursor:pointer;" onclick="closeModal('detailsModal')">✖</span>
+        <h2 id="detailName"></h2>
+        <p id="detailInfo"></p>
+    </div>
+</div>
+
+
+
+    <script>
+        let cart = [];
+        let descuentoAplicado = 0;
+
+        const PERFUMERIA = [
+            { cat: 'perfumes', nombre: 'JPG Elixir', precio: 1299, precioOriginal: 1650, oferta: false, agotado: false, img: 'jpgelixir-wp.jpeg', desc: 'Salida de lavanda tropical, corazón de benjuí (resina dulce) y base de haba tonka y vainilla. Un aroma denso, ardiente y sumamente proyectivo para la noche.' },
+            { cat: 'perfumes', nombre: 'Sauvage Dior Elixir', precio: 1099, oferta: false, agotado: false, img: 'sauvageDior-wp.jpeg', desc: 'Un concentrado licoroso de canela, cardamomo y nuez moscada, con un corazón de lavanda de Nyons y fondo de maderas ricas. Es la versión más potente y madura de Sauvage.' },
+            { cat: 'perfumes', nombre: 'Bleu De Chanel', precio: 1299, precioOriginal: 1500, oferta: false, agotado: false, img: 'bleuofchanel-wp.jpeg', desc: 'Notas cítricas de toronja y menta, que evolucionan a un fondo de incienso, cedro y sándalo. Es el estándar de la elegancia limpia y profesional.' },
+            { cat: 'perfumes', nombre: 'Versace', precio: 1199, precioOriginal: 1500, oferta: false, agotado: false, img: 'versace1-wp.png', desc: 'Menta vibrante, manzana verde y limón italiano en la salida, con un fondo dulce de haba tonka y ambroxan. Energía pura diseñada para durar y proyectar.' },
+            { cat: 'perfumes', nombre: 'Stronger With You Absolutely', precio: 1249, precioOriginal: 1500, oferta: false, agotado: false, img: 'stronger1-wp.png', desc: 'Un acorde de ron (licor), lavanda y una base potente de castaña glaseada con vainilla de Madagascar. Aroma cálido, dulce y sumamente sofisticado.' },
+            { cat: 'perfumes', nombre: 'JPG Scandal Le Parfum', precio: 1199, precioOriginal: 1500, oferta: false, agotado: false, img: 'scandal-wp.png', desc: 'Salida de geranio fresco, corazón de caramelo salado y base de haba tonka. Una fragancia audaz, dulce y magnética que no pasa desapercibida.' },
+            { cat: 'perfumes', nombre: '9PM Rebel', precio: 949, precioOriginal: 1500, oferta: false, agotado: false, img: '9pmrebel-wp.png', desc: 'Notas frutales de manzana y piña, con un toque de canela y una base profunda de vainilla y pachulí. La opción más vibrante y energética para salidas nocturnas.' },
+            { cat: 'perfumes', nombre: 'JPG Le Male Le Parfum', precio: 1299, precioOriginal: 1500, oferta: false, agotado: false, img: 'lemale-wp.jpeg', desc: 'Cardamomo intenso en la salida, corazón de lavanda e iris, y una base de vainilla negra y maderas. Es el olor de la autoridad: oscuro, elegante y empolvado.' },
+            { cat: 'perfumes', nombre: 'Valentino Born In Roma Rockstud', precio: 1199, precioOriginal: 1500, oferta: false, agotado: false, img: 'valentino1-wp.jpeg', desc: 'Salvia aromática y jengibre picante, con un fondo "mineral" de ámbar gris. Una fragancia moderna, oscura y con un estilo muy actual.' },
+            { cat: 'perfumes', nombre: 'Bad Boy Le Parfum', precio: 1150, oferta: false, agotado: false, img: 'badboy-wp.jpeg', desc: 'Una salida atrevida de pomelo y cannabis, corazón de pimienta negra y una base de cuero y vetiver. Un aroma rebelde, oscuro y con mucho carácter.' },
+            { cat: 'perfumes', nombre: 'Dylan Blue', precio: 899, precioOriginal: 1650, oferta: false, agotado: false, img: 'dylanblue-wp.jpg', desc: 'El equilibrio perfecto entre frescura marina y seducción intensa.' },
+            { cat: 'perfumes', nombre: 'Bad Boy Cobalt Elixir', precio: 1150, precioOriginal: 1650, oferta: false, agotado: false, img: 'cobalt-wp.jpg', desc: 'Electrizante y fresco. La esencia del hombre moderno y audaz.' },
+            { cat: 'perfumes', nombre: 'Club de Nuit Intense Man', precio: 750, precioOriginal: 1650, oferta: false, agotado: false, img: 'clubnuit-wp.jpg', desc: 'Lujoso y potente. Un aroma que proyecta éxito en cada paso.' },
+            { cat: 'perfumes', nombre: 'JPG Paradise Garden', precio: 1299, precioOriginal: 1650, oferta: false, agotado: false, img: 'paradise-wp.jpg', desc: 'Exótico y tropical. Un viaje sensorial al paraíso prohibido.' },
+            { cat: 'perfumes', nombre: 'Azzaro The Most Wanted', precio: 1050, precioOriginal: 1650, oferta: false, agotado: false, img: 'azzaro-wp.jpg', desc: 'El arma de seducción definitiva. Dulce, especiado e irresistible.' },
+            { cat: 'perfumes', nombre: 'JPG Le Male Elixir Absolu', precio: 1299, precioOriginal: 1650, oferta: false, agotado: false, img: 'absolu-wp.jpg', desc: 'Intenso como el oro. Una mezcla ardiente de vainilla y lavanda.' },
+            { cat: 'perfumes', nombre: 'Versace Eros Flame', precio: 849, precioOriginal: 1650, oferta: false, agotado: false, img: 'VersaceErosFlame-wp.jpg', desc: 'Pasión en estado puro. Notas cítricas y amaderadas que queman.' },
+            { cat: 'perfumes', nombre: '212 VIP Black', precio: 849, precioOriginal: 1650, oferta: false, agotado: false, img: '212black-wp.jpg', desc: 'El alma de la fiesta. Un aroma explosivo, dulce y magnético.' },
+            { cat: 'perfumes', nombre: 'Bond No. 9 Madison Avenue - Eau de Parfum', precio: 1890, precioOriginal: 1650, oferta: false, agotado: false, img: 'madisonavenue-wp.jpg', desc: 'La esencia del shopping de lujo en Nueva York. Madison Avenue es una fragancia fresca, floral y afrutada diseñada para la mujer moderna y con estilo. Destacan sus notas de manzana, bergamota y zarzamora, que se mezclan con un corazón de rosa y jazmín sobre una base de pachulí. Un aroma vibrante, sofisticado y lleno de energía.' },
+            { cat: 'perfumes', nombre: 'Bond No. 9 Lafayette Street - Eau de Parfum', precio: 1950, precioOriginal: 1650, oferta: false, agotado: false, img: 'lafayette-wp.jpg', desc: 'El aroma de la confianza absoluta. Lafayette Street es una fragancia versátil y ultra moderna que combina notas cítricas, florales y amaderadas. Destaca por su salida fresca de bergamota y cilantro, que evoluciona hacia un fondo dulce y suave de vainilla, ámbar y haba tonka. Es el perfume perfecto tanto para el día como para la noche, ideal para quien busca destacar con elegancia.' },
+            { cat: 'perfumes', nombre: 'Louis Vuitton Myriad - Extrait de Parfum', precio: 1990, precioOriginal: 2450, oferta: true, agotado: false, img: 'myriad-wp.jpg', desc: 'Una joya de la alta perfumería. Myriad es una fragancia profunda y opulenta que rinde homenaje al preciado Oud. Se mezcla con notas de rosa de Grasse, azafrán y cacao, creando un aroma cálido, especiado y sumamente sofisticado. Su frasco, diseñado con un tapón escultórico único, refleja la exclusividad de su interior. Una experiencia sensorial para los gustos más exigentes.' },
+            { cat: 'perfumes', nombre: 'Creed Aventus', precio: 1699, precioOriginal: 2850, oferta: true, agotado: false, img: 'adventus-wp.jpg', desc: 'La fragancia de los líderes. Una mezcla magistral de piña, abedul y almizcle que proyecta seguridad y éxito. Ideal para marcar presencia en cualquier entorno profesional.' },
+            { cat: 'perfumes', nombre: 'Creed Centaurus', precio: 1699, precioOriginal: 1650, oferta: false, agotado: false, img: 'centaurus-wp.jpg', desc: 'Una propuesta intensa y mística en su icónico frasco rojo. Notas de especias y maderas nobles que crean una atmósfera de distinción única e imponente.' },
+            { cat: 'perfumes', nombre: 'Xerjoff Erba Pura', precio: 1350, precioOriginal: 1650, oferta: false, agotado: false, img: 'erbapura-wp.jpg', desc: 'Una explosión de frutas mediterráneas con un fondo de vainilla cálida. Frescura sofisticada con una duración extrema que te acompaña durante todo el día.' },
+            { cat: 'perfumes', nombre: 'Xerjoff Erba Gold (Eau de Parfum)', precio: 1400, precioOriginal: 1650, oferta: false, agotado: false, img: 'erbapuragold-wp.jpg', desc: 'La evolución dorada de la casa Xerjoff. Más cremosa y refinada, con toques de jengibre y ámbar. El equilibrio perfecto para quienes aprecian los detalles de alta gama.' },
+            { cat: 'perfumes', nombre: 'Xerjoff Erba Accento (Eau de Parfum)', precio: 1350, precioOriginal: 1650, oferta: false, agotado: false, img: 'erbapuraaccento-wp.jpg', desc: 'Elegancia pura y pulcra. Notas de piña y jazmín en un fondo de pachulí suave. La fragancia del caballero moderno: impecable, discreta y siempre bajo control.' },
+            { cat: 'perfumes', nombre: 'Tom Ford Tobacco Vanille (Eau de Parfum)', precio: 1400, precioOriginal: 1650, oferta: false, agotado: false, img: 'tomfordtobacco-wp.jpg', desc: 'Un clásico de la alta perfumería. Tabaco artesanal mezclado con vainilla cremosa y frutos secos. Un aroma cálido y opulento que evoca madurez y gusto exquisito.' },
+            { cat: 'perfumes', nombre: 'Tom Ford Ombré Leather (Eau de Parfum)', precio: 1350, precioOriginal: 1650, oferta: false, agotado: false, img: 'tomford-wp.jpg', desc: 'La esencia de la libertad. El aroma del cuero negro se mezcla con notas florales y especias, creando una fragancia con carácter y actitud decidida.' },
+            { cat: 'perfumes', nombre: 'Dolce & Gabbana The One For Men (Eau de Parfum)', precio: 1150, precioOriginal: 1650, oferta: false, agotado: false, img: 'dolcetheone-wp.jpg', desc: 'Un imán de cumplidos. Notas de tabaco dulce, jengibre y cardamomo que crean una atmósfera magnética. El compañero perfecto para una cita importante.' },
+            { cat: 'perfumes', nombre: 'Dior Sauvage Parfum', precio: 1400, precioOriginal: 1400, oferta: false, agotado: false, img: 'diorparfum-wp.jpg', desc: 'La versión más densa y nocturna. Con sándalo de Sri Lanka y haba tonka, ofrece una masculinidad profunda y misteriosa con la máxima duración.' },
+            { cat: 'perfumes', nombre: 'Dior Sauvage Eau de Parfum', precio: 1350, precioOriginal: 1650, oferta: false, agotado: false, img: 'diorEDP-wp.jpg', desc: 'El balance ideal entre frescura y profundidad. Su toque ahumado de vainilla lo hace perfecto tanto para el día como para la noche. Versatilidad pura.' },
+            { cat: 'perfumes', nombre: 'Dior Sauvage Eau de Toilette', precio: 1350, precioOriginal: 1650, oferta: false, agotado: false, img: 'diorEDT-wp.jpg', desc: 'Frescura eléctrica y directa. Su nota de bergamota de Calabria es reconocida por su energía. Un básico esencial para proyectar una imagen limpia.' },
+            { cat: 'perfumes', nombre: 'JPG Divine (Eau de Parfum)', precio: 1299, precioOriginal: 1650, oferta: false, agotado: false, img: 'jpgDIVINE-wp.jpg', desc: 'La nueva joya de Gaultier. Una fragancia que rompe esquemas con notas solares y un toque salino. Innovación magnética para el estilo de vida actual.' },
+            { cat: 'perfumes', nombre: 'Prada Luna Rossa Ocean (Eau de Parfum)', precio: 1300, precioOriginal: 1650, oferta: false, agotado: false, img: 'pradaocean-wp.jpg', desc: 'Sofisticación azul reinventada. El iris y la lavanda aportan una sensación de limpieza extrema. El aroma del hombre dinámico que valora la pulcritud tecnológica.' },
+            { cat: 'perfumes', nombre: 'Armaf Club de Nuit Iconic (Eau de Parfum)', precio: 750, precioOriginal: 1650, oferta: false, agotado: false, img: 'iconic-wp.jpg', desc: 'Potencia y frescura en un solo frasco. Conocido por su gran proyección, es la opción "todo terreno" para quien busca que su presencia se note desde que entra.' },
+            { cat: 'perfumes', nombre: 'Carolina Herrera Good Girl - Eau de Parfum', precio: 1400, precioOriginal: 1650, oferta: false, agotado: false, img: 'carolinaH-wp.jpg', desc: 'Una fragancia icónica que destaca por su elegancia y sofisticación. Good Girl combina notas florales de jazmín y nardo con un toque cálido de cacao y haba tonka. Su diseño en forma de tacón azul medianoche es un símbolo de estilo a nivel mundial. Ideal para uso nocturno o eventos especiales. Presentación de 80ml.' },
+            { cat: 'perfumes', nombre: 'Carolina Herrera Good Girl Légere - Eau de Parfum', precio: 1400, precioOriginal: 1650, oferta: false, agotado: false, img: 'carolinaHxir-wp.jpg', desc: 'Una versión más luminosa y fresca del icónico tacón. Good Girl Légere destaca por su equilibrio perfecto entre el dulce del dulce de leche y la frescura del jazmín y el ylang-ylang. Es una fragancia sofisticada, ideal para el uso diario o eventos de día, que mantiene la elegancia característica de la línea. Presentación de 80ml con frasco en degradado azul.' },
+            { cat: 'perfumes', nombre: 'Bond No. 9 Greenwich Village - Eau de Parfum', precio: 1850, precioOriginal: 1650, oferta: false, agotado: false, img: 'greenwich-wp.jpg', desc: 'La esencia de la sofisticación neoyorquina. Greenwich Village es una fragancia cautivadora que equilibra la frescura del lichi y la mandarina con la dulzura del praliné y el toque moderno del ambroxan. Un aroma ligero, elegante y con una fijación excepcional, ideal para quien busca una firma olfativa única y refrescante. Presentación premium de 100ml.' },
+            { cat: 'perfumes', nombre: 'JPG Le Beau - Eau de Toilette', precio: 1299, precioOriginal: 1650, oferta: false, agotado: false, img: 'lebeau-wp.jpg', desc: 'La frescura del paraíso en un frasco. Le Beau de Jean Paul Gaultier es una fragancia magnética y ultra fresca que gira en torno a tres notas clave: la frescura del bergamota, la calidez de la madera de coco y la dulzura del haba tonka. Un aroma tropical, sexy y moderno, ideal para el uso diario o climas cálidos. Presentación de 125ml en su icónico frasco de torso masculino.' },
+            { cat: 'perfumes', nombre: 'Odyssey Mandarin', precio: 549, precioOriginal: 1650, oferta: false, agotado: false, img: 'Odyssey-wp.jpg', desc: 'Un perfume muy equilibrado que combina notas modernas con un fondo clásico. No es escandaloso, es más bien un aroma que acompaña bien en el trabajo o en reuniones tranquilas. Una opción segura si no sabes cuál elegir.' },
+            { cat: 'perfumes', nombre: 'Invictus Elixir', precio: 1200, precioOriginal: 1650, oferta: false, agotado: false, img: 'invictusE-wp.jpg', desc: 'Si te gusta el aroma clásico de Invictus pero buscas que se sienta un poco más profundo y serio, esta versión es la ideal. Tiene un toque de vainilla salada que lo hace muy agradable y fácil de llevar a diario.' },
+            { cat: 'perfumes', nombre: 'Hawas Fire', precio: 800, precioOriginal: 1650, oferta: false, agotado: false, img: 'hawasfire-wp.jpg', desc: 'Una opción muy versátil que mezcla notas cítricas con un toque cálido. Es de esos perfumes que te pones cuando quieres sentirte limpio y con energía. Se adapta bien a cualquier clima y no cansa el olfato.' },
+            { cat: 'perfumes', nombre: 'Hawas Elixir', precio: 750, precioOriginal: 1650, oferta: false, agotado: false, img: 'hawasE-wp.jpg', desc: 'Esta es una versión un poco más concentrada. Mantiene la frescura que a todos les gusta pero se siente un poco más maduro y tranquilo. Lo mejor que tiene es que se queda contigo muchas horas sin necesidad de retocarlo.' },
+            { cat: 'perfumes', nombre: '9PM', precio: 850, precioOriginal: 1650, oferta: false, agotado: false, img: '9pm-wp.jpg', desc: 'Un perfume muy cómodo de usar, con notas de vainilla y manzana que se sienten suaves pero duran todo el día. Es ideal si buscas algo que huela bien sin ser demasiado fuerte. Muy recomendado para salir por la tarde o noche.' },
+            { cat: 'perfumes', nombre: 'Parfums de Marly Layton', precio: 1400, precioOriginal: 1650, oferta: false, agotado: false, img: 'marlyazul-wp.jpg', desc: 'Un aroma que huele a limpio, como recién salido de bañar. Es muy fresco, con notas de lavanda y cítricos que dan una sensación de orden y confianza. Es el tipo de perfume que a todo el mundo le cae bien.' },
+            { cat: 'perfumes', nombre: 'Hawas Ice', precio: 899, precioOriginal: 1650, oferta: false, agotado: false, img: 'hawasHice-wp.jpg', desc: 'Frescura glacial. La versión más potente y fría del legendario Hawas.' },
+            { cat: 'perfumes', nombre: 'Maison Francis Kurkdjian - Baccarat Rouge 540', precio: 1450, precioOriginal: 1650, oferta: false, agotado: false, img: 'maison-wp.jpg', desc: 'Un aroma verdaderamente especial que se siente como una segunda piel. Destaca por su equilibrio perfecto entre el dulzor del jazmín y la calidez del ámbar. Es una fragancia luminosa y sofisticada, ideal si buscas algo que deje una impresión memorable pero suave.' },
+            { cat: 'perfumes', nombre: 'Afnan 9AM', precio: 890, precioOriginal: 1650, oferta: false, agotado: false, img: '9amDivine-wp.jpg', desc: 'La opción ideal para quienes disfrutan de los aromas frescos y energéticos. Se siente como una brisa marina combinada con toques de menta y cítricos. Es muy versátil: perfecto tanto para el gimnasio como para una salida casual el fin de semana.' },
+            { cat: 'perfumes', nombre: 'Afnan 9AM Dive', precio: 850, precioOriginal: 1650, oferta: false, agotado: false, img: '9am-wp.jpg', desc: 'Pensado para acompañarte en tus actividades diarias desde temprano. Tiene un carácter limpio y revitalizante gracias a sus notas de mandarina y cardamomo. Es ese perfume que te hace sentir impecable y listo para cualquier reunión.' },
+            { cat: 'perfumes', nombre: 'Armani Acqua di Giò - Classic', precio: 1150, precioOriginal: 1650, oferta: false, agotado: false, img: 'gio1-wp.jpg', desc: 'Un clásico que nunca falla porque transmite naturalidad y frescura. Inspirado en el mar y el sol, mezcla notas acuáticas con cítricos ligeros. Es la elección segura si buscas un aroma que a todo el mundo le agrada.' },
+            { cat: 'perfumes', nombre: 'Armani Acqua di Giò Profondo', precio: 1250, precioOriginal: 1650, oferta: false, agotado: false, img: 'gio2-wp.jpg', desc: 'Una interpretación más moderna y profunda del clásico de Armani. Tiene un toque más intenso con notas oceánicas y romero, lo que le da un carácter más decidido. Es refrescante pero con una duración notable.' },
+            { cat: 'perfumes', nombre: 'Kalan - Parfums de Marly', precio: 1400, precioOriginal: 1650, oferta: false, agotado: false, img: 'marlyrojo-wp.jpg', desc: 'Una fragancia con mucha personalidad para quienes buscan algo diferente. Combina la frescura de la naranja con un fondo especiado de pimienta negra. Es un aroma cálido y robusto que se adapta muy bien a climas frescos o eventos nocturnos.' },
+            { cat: 'perfumes', nombre: 'Lacoste L.12.12 Jaune', precio: 1299, precioOriginal: 1099, oferta: false, agotado: false, img: 'lacA-wp.jpg', desc: 'La definición de optimismo en una botella. Es una fragancia sumamente alegre y radiante, donde destaca la nota de toronja y manzana verde. Se siente muy fresca y ligera, perfecta para días soleados o después de hacer ejercicio. Es ese aroma sencillo pero efectivo que te hace sentir bien al instante.' },
+            { cat: 'perfumes', nombre: 'Silver Mountain Water - Creed', precio: 1499, precioOriginal: 1499, oferta: false, agotado: false, img: 'silvercreed-wp.jpg', desc: 'Una fragancia inspirada en la pureza y frescura de las montañas. Se siente como un aire frío y cristalino, gracias a su mezcla de té verde, grosellas negras y bergamota. Es un aroma muy limpio, relajante y elegante, ideal para quienes disfrutan de perfumes que transmiten serenidad y clase.' },
+// 
+            { cat: 'perfumes', nombre: 'Carolina Herrera 212 Men', precio: 1350, precioOriginal: 2600, oferta: false, agotado: false, img: '212men-wp.jpg', desc: 'El estándar de la frescura urbana con notas verdes, jengibre y un fondo varonil de sándalo. Ideal para proyectar limpieza y energía diaria.' },
+            { cat: 'perfumes', nombre: 'Mancera Red Tobacco', precio: 1299, precioOriginal: 3800, oferta: false, agotado: false, img: 'redtobacco-wp.jpg', desc: 'Una verdadera bestia en duración y proyección. Tabaco intenso, canela, vainilla y un toque de incienso. Un aroma oscuro, opulento y sumamente seductor. The ultimate winter fragance.' },
+            { cat: 'perfumes', nombre: 'Mancera Instant Crush', precio: 1299, precioOriginal: 3600, oferta: false, agotado: false, img: 'instantcrush-wp.jpg', desc: 'Un imán de cumplidos unisex. Notas de azafrán, jengibre y cítricos con un fondo dulce irresistible. Elegancia moderna en cada atomización.' },
+            { cat: 'perfumes', nombre: 'Mancera Intense Instant Crush', precio: 1399, precioOriginal: 4100, oferta: false, agotado: false, img: 'intensecrush-wp.jpg', desc: 'Versión Extrait de Parfum. Más profundidad, más duración y una estela que domina cualquier lugar. La joya de la corona de Mancera.' },
+            { cat: 'perfumes', nombre: 'Mancera Xplicit Vanilla', precio: 1299, precioOriginal: 3500, oferta: false, agotado: false, img: 'xplicit-wp.jpg', desc: 'Vainilla de lujo con toques florales y ambarados. Seducción pura, cálida y sofisticada. Ideal para quienes buscan un aroma dulce pero exclusivo.' },
+            { cat: 'perfumes', nombre: 'YSL MYSLF - Eau de Parfum', precio: 1350, precioOriginal: 3100, oferta: false, agotado: false, img: 'myslf-wp.jpg', desc: 'El lanzamiento más exitoso del año. Frescura cítrica de bergamota que seca en un aroma limpio de flor de azahar y maderas modernas. Sofisticación pura y moderna.' },
+            { cat: 'perfumes', nombre: 'YSL Y Eau de Parfum', precio: 1350, precioOriginal: 3300, oferta: false, agotado: false, img: 'yslyedp-wp.jpg', desc: 'El rey de los perfumes azules. Manzana, jengibre y salvia que proyectan seguridad y éxito. Súper potente y dura todo el día en piel. A must-have.' },
+            { cat: 'perfumes', nombre: 'Valentino Born in Roma Uomo Intense', precio: 1199, precioOriginal: 3400, oferta: false, agotado: false, img: 'valentinointense-wp.jpg', desc: 'Vainilla oscura, lavanda seductora y un toque ahumado. Es una fragancia nocturna, profunda y con un estilo rebelde pero de alta costura.' },
+            { cat: 'perfumes', nombre: 'CH Bad Boy Elixir', precio: 1250, precioOriginal: 3100, oferta: false, agotado: false, img: 'badboyelixir-wp.jpg', desc: 'Fuego puro. Cacao cálido, incienso y un toque de ciruela. Más oscuro y misterioso que el original, ideal para la noche y citas románticas.' },
+            { cat: 'perfumes', nombre: 'D&G Light Blue Eau Intense Pour Homme', precio: 1150, precioOriginal: 2600, oferta: false, agotado: false, img: 'lightblueintense-wp.jpg', desc: 'El rey indiscutible del calor. Toronja congelada, agua de mar y enebro. Un golpe de frescura salada que dura muchísimo más que los perfumes frescos promedio.' },
+            { cat: 'perfumes', nombre: 'Lattafa Asad', precio: 549, precioOriginal: 1200, oferta: false, agotado: false, img: 'asad-wp.jpg', desc: 'El dupe más famoso del mercado (inspirado en Sauvage Elixir). Vainilla, pimienta negra y maderas cálidas. Una bestia en duración y masculinidad. Outstanding value.' },
+            { cat: 'perfumes', nombre: 'Lattafa Asad Zanzibar', precio: 549, precioOriginal: 1300, oferta: false, agotado: false, img: 'asadzanzibar-wp.jpg', desc: 'El nuevo lanzamiento viral. Una mezcla tropical de coco, vainilla e iris. Cremoso, diferente y perfecto para destacar en cualquier lugar.' },
+            { cat: 'perfumes', nombre: 'Armaf Club de Nuit Milestone', precio: 850, precioOriginal: 1600, oferta: false, agotado: false, img: 'milestone-wp.jpg', desc: 'Un viaje al mar Mediterráneo. Notas frutales marinas, maderas suaves y almizcle. Totalmente unisex, salado y sumamente elegante.' },
+
+            ];
+
+        const TECNOLOGIA = [
+            { cat: 'tech', nombre: 'Iphone 17 Pro', precio: 14999, precioOriginal: 23499, oferta: true, agotado: false, img: 'iphone17-wp.jpeg', desc: 'El epicentro de tu productividad. Forjado en titanio de grado aeroespacial, el iPhone 17 Pro redefine la potencia con su chip de última generación. Sus 256GB te aseguran espacio de sobra para tus proyectos, contenido y aplicaciones de alto rendimiento. No es solo un smartphone, es el motor del Ecosistema Axtelix en la palma de tu mano. Potencia bruta con un diseño impecable.' },
+            { cat: 'tech', nombre: 'Airpods Pro 2G', precio: 899, precioOriginal: 1200, oferta: false, agotado: false, img: 'airpods-wp.jpeg', desc: 'Sumérgete en el enfoque total. Gracias a su cancelación activa de ruido líder en la industria, los AirPods Pro 2G te permiten aislarte del mundo para concentrarte en tus metas. Audio espacial personalizado y una autonomía mejorada para que tu música y tus llamadas tengan la claridad que tu ritmo de vida exige. El complemento indispensable para el profesional moderno.' },
+            { cat: 'tech', nombre: 'Cargador Inalámbrico MagSafe Pro', precio: 449, oferta: false, agotado: false, img: 'cargador-wp.png', desc: 'La energía que tu ecosistema necesita, sin fricciones. Diseñado para una alineación magnética perfecta, el MagSafe Pro ofrece una carga rápida y segura que optimiza la vida útil de tu batería. Su diseño minimalista y estético encaja perfectamente en cualquier escritorio de alto nivel. Mantén tu iPhone siempre listo para la acción con la eficiencia que solo Axtelix te garantiza.' }
+        ];
+
+        const CALZADO = [
+            { cat: 'shoes', nombre: 'Nike Dunk Low', precio: 1390, precioOriginal: 2549, oferta: true, agotado: false, img: 'nike-wp.jpeg', desc: 'Calidad Garantizada. Tallas 23-29 MX.' },
+            { cat: 'shoes', nombre: 'Nike Air Max 270 Black/White', precio: 1350, oferta: false, agotado: false, img: 'nikeairforce-wp.jpg', desc: 'Estilo y comodidad en cada paso. Los Nike Air Max 270 cuentan con la unidad Air más alta hasta la fecha. Ofreciendo una amortiguación ultra suave que se siente como caminar en el aire. Con un diseño inspirado en los iconos de Air Max. su parte superior de malla transpirable mantiene tus pies frescos. Ideales para el uso diario con un look deportivo y moderno.' },
+            { cat: 'shoes', nombre: 'Nike Air Force Premium Just Do It', precio: 1450, oferta: false, agotado: false, img: 'nikebn-wp.jpg', desc: 'Un icono que celebra la motivación. Esta edición especial de los Air Force 1 presenta el legendario lema Just Do It con un diseño de logotipos repetidos sobre el Swoosh. Fabricados con materiales sintéticos de alta calidad y la clásica cápsula de aire en la suela para una comodidad duradera. El equilibrio perfecto entre un estilo clásico y un mensaje audaz.' }
+        ];
+
+        const SOFTWARE = [
+            { cat: 'web', nombre: 'Paginas Web', precio: 14500, precioOriginal: 0, oferta: false, agotado: true, img: 'paginaweb-wp.jpg', desc: "🚀 ECOSISTEMA AUTOMATIZADO: No es solo una web, es un sistema que VENDE POR TI 24/7. Incluye Bot de WhatsApp inteligente, gestión directa desde Google Sheets y generador de tickets profesional. ¡Lleva tu negocio al siguiente nivel hoy mismo!"},
+            { cat: 'web', nombre: 'AXTELIX ERP | Standard Edition', precio: 1200, precioOriginal: 0, oferta: false, agotado: false, img: 'soft1-wp.png', desc: "¿Cansado de no saber cuánto ganas realmente al final del día? Deja de usar libretas o Excels complicados. Con AXTELIX ERP, profesionaliza tu negocio de Dropshipping o tienda física con una interfaz de última generación. ¿Qué incluye esta versión? 🛒 Punto de Venta (POS): Escanea códigos, suma productos y cierra ventas en segundos. 📦 Gestión de Inventario: Controla entradas, salidas y existencias reales (¡No más ventas sin stock!). 📊 Dashboard de Ganancias: Visualiza tu total acumulado con un solo clic. 🔒 Seguridad por Equipo: Licencia vinculada a tu hardware para proteger tu información. ⚡ Interfaz Dark Mode: Diseño fluido, rápido y moderno (CustomTkinter). Ideal para emprendedores que buscan rapidez y orden sin pagar mensualidades costosas."}
+        ];
+
+        const INVENTARIO = [...PERFUMERIA, ...TECNOLOGIA, ...CALZADO, ...SOFTWARE];
+
+        function renderizarProductos() {
+            const contenedores = {
+                perfumes: document.getElementById('container-perfumes'),
+                tech: document.getElementById('container-tech'),
+                shoes: document.getElementById('container-shoes'),
+                web: document.getElementById('container-web')
+            };
+
+            Object.values(contenedores).forEach(c => { if(c) c.innerHTML = ''; });
+
+            INVENTARIO.forEach(p => {
+    const esAgotado = p.agotado ? 'sold-out' : '';
+    const badgeAgotado = p.agotado ? `<div class="badge-agotado">SOLD OUT</div>` : '';
+    const badgeOferta = p.oferta && !p.agotado ? `<div class="badge-oferta">OFERTA 🔥</div>` : '';
+    
+    
+    // Si está agotado, el botón dirá "SIN STOCK"
+    const textoBoton = p.agotado ? "SIN STOCK" : "AÑADIR AL CARRITO";
+    const precioTachado = p.oferta ? `<span style="text-decoration: line-through; color: #888; font-size: 0.8rem; display: block;">$${p.precioOriginal}</span>` : '';
+
+    const html = `
+        <div class="product-card ${esAgotado}">
+            ${badgeOferta}
+            ${badgeAgotado}
+            <h3>${p.nombre}</h3>
+            <span class="price">${precioTachado} $${p.precio}</span>
+            <img src="${p.img}" onclick="showProductDetails('${p.nombre}', '${p.desc}')">
+            <button class="btn-details" onclick="showProductDetails('${p.nombre}', '${p.desc}')">Detalles</button>
+            <button class="btn-add-cart" onclick="addToCart('${p.nombre}', ${p.precio}, this)" ${p.agotado ? 'disabled' : ''}>
+                ${textoBoton}
+            </button>
+        </div>
+    `;
+    if (contenedores[p.cat]) contenedores[p.cat].innerHTML += html;
+    setTimeout(activarSensores, 500);
+});
+        }
+
+        // --- ANIMACIÓN DE LA LUPA ---
+        function animarLupa() {
+            const lupa = document.getElementById('lupa');
+            const searchInput = document.getElementById('productSearch');
+            
+            // Efecto lupa feliz gira
+            lupa.classList.add('lupa-feliz');
+            setTimeout(() => {
+                lupa.classList.remove('lupa-feliz');
+                // Expandir texto (letter-spacing)
+                searchInput.style.letterSpacing = "2px";
+            }, 700);
+        }
+
+        function scrollSlider(id, direction) {
+    const container = document.getElementById(id);
+    const scrollAmount = 320 * direction;
+    
+    // Si la pantalla es pequeña (celular), que sea instantáneo
+    if (window.innerWidth <= 768) {
+        container.scrollBy({
+            left: scrollAmount,
+            behavior: 'auto' // 'auto' es instantáneo, sin esperas ni trabas
+        });
+        return; // Salimos de la función para que no intente hacer lo lento
+    }
+
+    // --- Si es PC, sigue con tu animación suave de siempre ---
+    const start = container.scrollLeft;
+    const duration = 1300; // Aquí puedes dejarlo en 1300 o lo que prefieras para PC
+    let startTime = null;
+
+    function animation(currentTime) {
+        if (startTime === null) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const progress = Math.min(timeElapsed / duration, 1);
+        const ease = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+        container.scrollLeft = start + (scrollAmount * ease);
+        if (timeElapsed < duration) requestAnimationFrame(animation);
+    }
+    requestAnimationFrame(animation);
+}
+
+        function addToCart(nameOrBtn, price, btnElement) {
+    let nombre, precio, btn;
+
+    // --- 1. DETECCIÓN DE FORMATO (Compatibilidad Total) ---
+    if (typeof nameOrBtn === 'string') {
+        // Formato viejo: addToCart('Dunk', 790, this)
+        nombre = nameOrBtn;
+        precio = price;
+        btn = btnElement;
+    } else {
+        // Formato nuevo: addToCart(this)
+        btn = nameOrBtn;
+        const card = btn.closest('.product-card');
+        nombre = card.querySelector('h3').innerText;
+        precio = card.querySelector('.price').innerText;
+    }
+
+    const card = btn.closest('.product-card');
+    const tallaSel = card.querySelector('.size-btn.active');
+    
+    // --- 2. VALIDACIÓN DE TALLA ---
+    if (card.querySelector('.size-options') && !tallaSel) {
+        alert("Por favor, selecciona una talla");
+        return;
+    }
+
+    // --- 3. GUARDAR EN EL CARRITO (Doble nombre para evitar errores) ---
+    const producto = {
+        nombre: nombre,      // Para el Ticket
+        name: nombre,        // Para que el carrito viejo lo reconozca
+        precio: String(precio),
+        price: precio,       // Para que el carrito viejo lo reconozca
+        talla: tallaSel ? tallaSel.innerText : null,
+        cantidad: 1
+    };
+    cart.push(producto);
+
+    // --- 4. ANIMACIONES (Tu código original mejorado) ---
+    const cartIcon = document.getElementById('cart-icon');
+    if (cartIcon) {
+        cartIcon.classList.remove('cart-pop');
+        void cartIcon.offsetWidth; // Reinicia animación
+        cartIcon.classList.add('cart-pop');
+    }
+    
+    // Feedback en el botón
+    const originalText = btn.innerText;
+    const originalBG = btn.style.backgroundColor;
+
+    btn.innerText = "¡AÑADIDO!";
+    btn.style.backgroundColor = "#d4af37";
+    btn.style.color = "#000000"; // Asegura que el texto se vea
+    
+    setTimeout(() => {
+        btn.innerText = "AÑADIR AL CARRITO";
+        btn.style.backgroundColor = "#ffffff";
+        btn.style.color = "#000000";
+    }, 800);
+
+    // --- 5. ACTUALIZAR INTERFAZ ---
+    // Llamamos a ambas por si acaso, así no falla nada arriba
+    if (typeof actualizarCarrito === 'function') actualizarCarrito();
+    if (typeof updateCartUI === 'function') updateCartUI();
+}
+
+        function updateCartUI() {
+    document.getElementById('cart-count').innerText = cart.length;
+    const container = document.getElementById('cart-items-container');
+    const totalEl = document.getElementById('cart-total');
+    container.innerHTML = '';
+    let subtotal = 0;
+
+    // 1. Agrupamos los productos por nombre para sumar cantidades
+    const cartGrouped = {};
+    cart.forEach((item, index) => {
+        subtotal += item.price;
+        if (cartGrouped[item.name]) {
+            cartGrouped[item.name].quantity += 1;
+            // Guardamos el primer índice que encontremos para que el botón eliminar funcione
+            cartGrouped[item.name].originalIndices.push(index);
+        } else {
+            cartGrouped[item.name] = { 
+                ...item, 
+                quantity: 1, 
+                originalIndices: [index] 
+            };
+        }
+    });
+
+    // 2. Renderizamos los productos ya agrupados
+    Object.values(cartGrouped).forEach(item => {
+        const lastIndex = item.originalIndices[item.originalIndices.length - 1];
+        container.innerHTML += `
+        <div class="cart-item">
+        <span>${item.quantity}x ${item.name}</span>
+        <span>$${item.price * item.quantity}</span>
+        <button onclick="removeFromCart(${lastIndex})" 
+                style="background:none; border:none; color:#ff4d4d; cursor:pointer; font-size:16px; margin-left:10px;">
+            ✖
+        </button>
+    </div>`;
+    });
+
+    // 3. Lógica del total con descuento (se queda igual a como la tenías)
+    let finalTotal = subtotal - descuentoAplicado;
+    if(finalTotal < 0) finalTotal = 0;
+    
+    totalEl.innerHTML = descuentoAplicado > 0 
+        ? `<small style="color:red; text-decoration:line-through;">$${subtotal}</small> $${finalTotal}`
+        : `$${subtotal}`;
+}
+
+        async function aplicarCupon() {
+            const input = document.getElementById('input-cupon').value.trim().toUpperCase();
+            const mensaje = document.getElementById('mensaje-cupon');
+            if (!input) return;
+            mensaje.style.color = "white";
+            mensaje.innerText = "Validando...";
+
+            try {
+                const respuesta = await fetch('https://axtelix-backend.onrender.com/validar-cupon', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ codigo: input })
+                });
+                const data = await respuesta.json();
+                if (data.valido) {
+                    descuentoAplicado = data.descuento;
+                    mensaje.style.color = "#25d366";
+                    mensaje.innerText = `¡Cupón Aplicado! -$${descuentoAplicado} MXN`;
+                    updateCartUI();
+                } else {
+                    mensaje.style.color = "red";
+                    mensaje.innerText = data.mensaje;
+                }
+            } catch (error) {
+                mensaje.style.color = "orange";
+                mensaje.innerText = "Error de conexión.";
+            }
+        }
+
+        function removeFromCart(index) { 
+            cart.splice(index, 1); 
+            updateCartUI(); 
+        }
+
+        function sendWhatsApp() {
+    if(cart.length === 0) return alert("El carrito está vacío");
+
+    let subtotal = 0;
+    const cartGrouped = {};
+
+    // 1. Agrupamos y sumamos el subtotal
+    cart.forEach(item => {
+        subtotal += item.price;
+        cartGrouped[item.name] = (cartGrouped[item.name] || 0) + 1;
+    });
+
+    let msg = "¡Hola Axtelix! Deseo comprar:%0A";
+
+    // 2. Creamos la lista con el formato "2x Producto"
+    for (const [name, quantity] of Object.entries(cartGrouped)) {
+        msg += `- ${quantity}x ${name}%0A`;
+    }
+
+    // 3. Cálculo de totales (manteniendo tu lógica de cupones)
+    let totalFinal = subtotal - descuentoAplicado;
+    if(totalFinal < 0) totalFinal = 0;
+
+    if(descuentoAplicado > 0) msg += `%0ADESCUENTO: -$${descuentoAplicado}%0A`;
+    
+    msg += `%0ATotal Final: $${totalFinal}%0A%0A¿Me podrían proporcionar los métodos de pago?`;
+
+    // 4. Abrir WhatsApp
+    window.open(`https://wa.me/527206181781?text=${msg}`);
+}
+
+        function filterProducts() {
+            const input = document.getElementById('productSearch').value.toLowerCase();
+            const cards = document.getElementsByClassName('product-card');
+            for (let card of cards) {
+                const title = card.getElementsByTagName('h3')[0].innerText.toLowerCase();
+                card.classList.toggle('hidden', !title.includes(input));
+            }
+        }
+
+        function showProductDetails(name, info) {
+            document.getElementById('detailName').innerText = name;
+            document.getElementById('detailInfo').innerText = info;
+            openModal('detailsModal');
+        }
+
+        function openModal(id) { document.getElementById(id).style.display = "block"; }
+        function closeModal(id) { document.getElementById(id).style.display = "none"; }
+        window.onclick = function(e) { if(e.target.className === 'modal') e.target.style.display = "none"; }
+        window.onload = renderizarProductos;
+
+
+        // Configuramos el "Sensor"
+const observerOptions = {
+    root: null, // usa la pantalla como referencia
+    threshold: 0.7 // el producto debe estar al 70% visible para activarse
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            // Cuando el producto entra al centro, brilla
+            entry.target.classList.add('active');
+        } else {
+            // Cuando se sale del centro, se apaga
+            entry.target.classList.remove('active');
+        }
+    });
+}, observerOptions);
+
+// Función para decirle al sensor qué observar
+function activarSensores() {
+    const productos = document.querySelectorAll('.product-card');
+    productos.forEach(p => observer.observe(p));
+}
+
+// Lo ejecutamos después de que se carguen los productos
+// Como tú usas renderizarProductos(), hay que llamarla ahí
+setTimeout(activarSensores, 1000);
+
+
+
+function crearEstrellaAmbiente() {
+    const estrella = document.createElement('span');
+    
+    // 1. Crea tu lista de emojis favoritos aquí
+    const emojis = ['⭐', '⚡']; 
+    
+    // 2. Esta línea elige uno al azar de la lista
+    const emojiRandom = emojis[Math.floor(Math.random() * emojis.length)];
+    
+    estrella.textContent = emojiRandom;
+    estrella.className = 'estrella-ambiente';
+
+    // ... (el resto de tu código de tamaño y posición se queda igual)
+    // 1. Tamaño aleatorio
+    const size = Math.floor(Math.random() * 2) + 1; // 1.5rem, 2.5rem
+    estrella.style.fontSize = `${size}rem`;
+
+    // 2. Posición aleatoria en toda la página
+    const posX = Math.floor(Math.random() * window.innerWidth);
+    const posY = Math.floor(Math.random() * document.body.scrollHeight);
+    
+    estrella.style.left = `${posX}px`;
+    estrella.style.top = `${posY}px`;
+
+    // 3. Dirección de flotación aleatoria para que se muevan a distintos lados
+    const floatX = (Math.random() - 0.5) * 200; // Se mueve de -100px a +100px en X
+    const floatY = (Math.random() - 0.5) * 200; // Se mueve de -100px a +100px en Y
+    estrella.style.setProperty('--float-x', `${floatX}px`);
+    estrella.style.setProperty('--float-y', `${floatY}px`);
+
+    // 4. Aplicar la animación de flotar y desvanecer
+    estrella.style.animation = `estrellaFlotante ${Math.random() * 8 + 5}s forwards`; // Duración entre 5 y 13 segundos
+
+    document.body.appendChild(estrella);
+
+    // 5. Limpiar el HTML después de que la estrella se desvanezca
+    setTimeout(() => {
+        estrella.remove();
+    }, 13000); // Un poco más del máximo de la animación
+}
+
+// Lanza una estrella nueva cada 1.5 segundos (puedes ajustar el tiempo)
+setInterval(crearEstrellaAmbiente, 1500);
+
+function lluviaDeEstrellas() {
+    // Definimos cuántas estrellas queremos que salgan al mismo tiempo
+    // En este caso, saldrán entre 2 y 5 estrellas cada vez
+    const cantidad = Math.floor(Math.random() * 4) + 2; 
+
+    for (let i = 0; i < cantidad; i++) {
+        // Usamos un pequeño delay para que no aparezcan todas exactamente al mismo milisegundo
+        setTimeout(crearEstrellaAmbiente, Math.random() * 500);
+    }
+}
+
+// Ahora llamamos a la "lluvia" cada 2 segundos
+setInterval(lluviaDeEstrellas, 2000);
+
+
+
+document.addEventListener('keydown', function (e) {
+    // Bloquea Ctrl + Plus, Ctrl + Minus y Ctrl + Zero
+    if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
+        e.preventDefault();
+    }
+});
+
+document.addEventListener('wheel', function (e) {
+    // Bloquea el Ctrl + Rueda del ratón
+    if (e.ctrlKey) {
+        e.preventDefault();
+    }
+}, { passive: false });
+
+const productos = ["Sauvage Dior", "Nike Dunk Low", "Bleu de Chanel", "Versace Eros"];
+const ciudades = ["CDMX", "Monterrey", "Guadalajara", "Cancún", "Querétaro"];
+
+function mostrarNotificacion() {
+    const proof = document.getElementById('social-proof') || document.createElement('div');
+    proof.id = 'social-proof';
+    document.body.appendChild(proof);
+
+    const p = productos[Math.floor(Math.random()*productos.length)];
+    const c = ciudades[Math.floor(Math.random()*ciudades.length)];
+    
+    proof.innerHTML = `🛍️ <b>Alguien en ${c}</b><br>compró un ${p} hace un momento.`;
+    proof.style.left = '20px';
+
+    setTimeout(() => { proof.style.left = '-300px'; }, 5000); // Se esconde tras 5s
+}
+setInterval(mostrarNotificacion, 60000); // Sale cada 60 segundos
+
+
+// --- 1. SINCRONIZADOR DE PRECIOS ---
+const SB_URL = 'https://akyuuehbjerawwvvauud.supabase.co'; 
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFreXV1ZWhiamVyYXd3dnZhdXVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMDQzMjksImV4cCI6MjA4OTY4MDMyOX0.w-WD2Fn1IDvl850hDBg3iehkckYYymwO6GoQMAj3THM'; 
+
+window.actualizarTodoElSistema = function() {
+    const totalDorado = document.getElementById('total-carrito');
+    const totalOriginal = document.getElementById('cart-total');
+    const precioViejo = document.getElementById('precio-viejo');
+
+    if (typeof cart !== 'undefined' && totalOriginal) {
+        const sumaBase = cart.reduce((acc, p) => {
+            let pLimpio = parseFloat(String(p.precio || p.price).replace(/[$,]/g, '')) || 0;
+            return acc + (pLimpio * (p.cantidad || 1));
+        }, 0);
+
+        let textoLimpio = totalOriginal.innerText.replace(/[$,]/g, '').trim();
+        if (textoLimpio.includes(' ')) {
+            const partes = textoLimpio.split(/\s+/);
+            textoLimpio = partes[partes.length - 1];
+        }
+
+        let sumaActual = parseFloat(textoLimpio);
+        if (isNaN(sumaActual) || sumaActual <= 0) sumaActual = sumaBase;
+
+        const valorFinal = "$" + sumaActual.toFixed(0);
+        if (totalOriginal.innerText !== valorFinal) {
+            totalOriginal.innerText = valorFinal;
+        }
+
+        if (totalDorado) totalDorado.innerText = "$" + sumaActual.toFixed(2);
+        
+        const displaysPago = document.querySelectorAll('.pago-directo-total');
+        displaysPago.forEach(el => el.innerText = "$" + sumaActual.toFixed(2));
+
+        if (sumaActual < (sumaBase - 1) && precioViejo) {
+            precioViejo.innerText = "$" + sumaBase.toFixed(2);
+            precioViejo.style.display = "inline-block";
+            precioViejo.style.marginRight = "8px";
+            precioViejo.style.textDecoration = "line-through";
+            precioViejo.style.color = "red";
+        } else if (precioViejo) {
+            precioViejo.style.display = "none";
+        }
+    }
+};
+
+const nodoPrecio = document.getElementById('cart-total');
+if (nodoPrecio) {
+    const observador = new MutationObserver(() => {
+        observador.disconnect(); 
+        window.actualizarTodoElSistema();
+        observador.observe(nodoPrecio, { childList: true, characterData: true, subtree: true });
+    });
+    observador.observe(nodoPrecio, { childList: true, characterData: true, subtree: true });
+}
+setInterval(window.actualizarTodoElSistema, 1000);
+
+window.obtenerSiguienteFolio = function() {
+    let ultimoFolio = localStorage.getItem('ultimo_folio_axtelix') || 100;
+    let nuevoFolio = parseInt(ultimoFolio) + 1;
+    localStorage.setItem('ultimo_folio_axtelix', nuevoFolio);
+    return "AXT-" + nuevoFolio;
+};
+
+// --- PROCESO DE PAGO Y REGISTRO EN SUPABASE ---
+window.pagoDirecto = function(metodo) {
+    window.actualizarTodoElSistema();
+    
+    // CORRECCIÓN: transferencia: false para que NO esté en mantenimiento
+    const mant = { paypal: true, mercado: true, transferencia: false }; 
+
+    if (mant[metodo] === true) {
+        const avisoMant = document.createElement('div');
+        avisoMant.id = "aviso-mantenimiento";
+        avisoMant.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:10000000; display:flex; justify-content:center; align-items:center; padding:20px;";
+        avisoMant.innerHTML = `
+            <div style="background:white; padding:30px; border-radius:24px; text-align:center; max-width:400px; font-family:sans-serif;">
+                <div style="font-size:50px; margin-bottom:15px;">🛠️</div>
+                <h2 style="color:#111;">Mantenimiento</h2>
+                <p style="color:#666;">El pago por <b>${metodo.toUpperCase()}</b> no está disponible temporalmente.</p>
+                <button onclick="document.getElementById('aviso-mantenimiento').remove()" style="margin-top:20px; background:black; color:white; border:none; padding:12px 30px; border-radius:12px; font-weight:bold; cursor:pointer; width:100%;">ENTENDIDO</button>
+            </div>`;
+        document.body.appendChild(avisoMant);
+        return;
+    }
+
+    if (!cart || cart.length === 0) { alert("🛒 Tu carrito está vacío."); return; }
+
+    const productosAgrupados = {};
+    cart.forEach(p => {
+        const nombre = p.nombre || p.titulo || p.name || p.title || "Producto";
+        const talla = p.talla ? ` (${p.talla})` : "";
+        const idUnico = nombre + talla;
+        const precioUnitario = parseFloat(String(p.precio || p.price).replace(/[$,]/g, '')) || 0;
+        if (productosAgrupados[idUnico]) {
+            productosAgrupados[idUnico].cantidadTotal += (p.cantidad || 1);
+        } else {
+            productosAgrupados[idUnico] = { nombreDisplay: nombre + talla, cantidadTotal: (p.cantidad || 1), precioLimpio: precioUnitario };
+        }
+    });
+    const listaFinal = Object.values(productosAgrupados);
+
+    let totalExhibido = document.getElementById('total-carrito').innerText;
+    const precioNumerico = totalExhibido.replace(/[^\d.]/g, ''); 
+    const resumenDinamico = listaFinal.map(p => `${p.cantidadTotal}x ${p.nombreDisplay}`).join('\n- ');
+
+    const checkoutCapa = document.createElement('div');
+    checkoutCapa.id = "capa-checkout";
+    checkoutCapa.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999999; display:flex; justify-content:center; align-items:center; padding:15px; box-sizing:border-box; font-family:sans-serif;";
+    
+    checkoutCapa.innerHTML = `
+    <div style="background:white; width:100%; max-width:450px; border-radius:24px; padding:25px; position:relative; color:#333; text-align:center; max-height:90vh; overflow-y:auto;">
+        <button onclick="document.getElementById('capa-checkout').remove()" style="position:absolute; top:15px; right:15px; border:none; background:none; font-size:30px; cursor:pointer; color:#999;">&times;</button>
+        <h3 style="margin:0; color:#111;">Datos para el Envío</h3>
+        <p style="font-size:14px; color:#555; margin-bottom:15px;">Total: <b style="color:#d4af37;">${totalExhibido}</b></p>
+        <input type="text" id="ins-nom" placeholder="Nombre completo" style="width:100%; padding:14px; margin-bottom:10px; border:1px solid #ddd; border-radius:12px; font-size:16px; box-sizing:border-box; color:black;">
+        <input type="text" id="ins-dir" placeholder="Calle y Número" style="width:100%; padding:14px; margin-bottom:10px; border:1px solid #ddd; border-radius:12px; font-size:16px; box-sizing:border-box; color:black;">
+        <input type="text" id="ins-logistica" placeholder="Colonia, CP, Ciudad" style="width:100%; padding:14px; margin-bottom:10px; border:1px solid #ddd; border-radius:12px; font-size:16px; box-sizing:border-box; color:black;">
+        <input type="tel" id="ins-tel" placeholder="Número de WhatsApp" style="width:100%; padding:14px; margin-bottom:10px; border:1px solid #ddd; border-radius:12px; font-size:16px; box-sizing:border-box; color:black;">
+        <textarea id="ins-ref" placeholder="Referencias de la casa" style="width:100%; padding:14px; margin-bottom:20px; border:1px solid #ddd; border-radius:12px; font-size:16px; box-sizing:border-box; height:80px; resize:none; color:black;"></textarea>
+        <button id="btn-next-step" style="background:black; color:white; width:100%; padding:18px; border:none; border-radius:15px; font-weight:bold; cursor:pointer;">CONTINUAR</button>
+    </div>`;
+    document.body.appendChild(checkoutCapa);
+
+    document.getElementById('btn-next-step').onclick = async function() {
+        const nom = document.getElementById('ins-nom').value.trim();
+        const dir = document.getElementById('ins-dir').value.trim();
+        const log = document.getElementById('ins-logistica').value.trim();
+        const tel = document.getElementById('ins-tel').value.trim();
+        const ref = document.getElementById('ins-ref').value.trim();
+
+        if(!nom || !dir || !log || tel.length < 10) { alert("⚠️ Completa tus datos."); return; }
+        const folioUnico = window.obtenerSiguienteFolio();
+        const metodoTexto = metodo === 'paypal' ? 'PayPal' : metodo === 'mercado' ? 'Mercado Pago' : 'Transferencia Bancaria';
+
+        // --- ENVÍO DIRECTO A SUPABASE CON VALIDACIÓN DE ERRORES ---
+        try {
+            const respuestaSupa = await fetch(`${SB_URL}/rest/v1/pedidos`, {
+                method: 'POST',
+                headers: {
+                    'apikey': SB_KEY,
+                    'Authorization': `Bearer ${SB_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify({
+                    Folio: folioUnico,
+                    Cliente: nom,
+                    Whatsapp: tel,
+                    Direccion: `${dir}, ${log}. Ref: ${ref}`, // Sin acento
+                    Total: parseFloat(precioNumerico) || 0,
+                    Metodo: metodoTexto,
+                    Productos: resumenDinamico
+                })
+            });
+
+            if (respuestaSupa.ok) {
+                console.log("✅ ¡Registro exitoso en Supabase!");
+            } else {
+                const errorDetalle = await respuestaSupa.text();
+                console.error("❌ Error Supabase:", errorDetalle);
+                alert("Hubo un detalle subiendo a la base de datos (revisa mayúsculas en las columnas de Supabase): " + errorDetalle);
+            }
+        } catch (err) {
+            console.error("Error guardando en la nube:", err);
+        }
+
+        const modal = checkoutCapa.querySelector('div');
+        let infoBancaria = "";
+        if (metodo === 'transferencia') {
+            infoBancaria = `
+            <div style="background:#fff3cd; border:1px solid #ffeeba; border-radius:15px; padding:15px; margin-bottom:15px; text-align:left; font-size:13px; color:#856404;">
+                <p style="margin:0 0 5px 0;"><b>🏦 Datos para tu depósito:</b></p>
+                <p style="margin:2px 0;"><b>Banco:</b> BanCoppel</p>
+                <p style="margin:2px 0;"><b>CLABE:</b> 1373 2610 0767 5685 10</p>
+                <p style="margin:2px 0;"><b>Beneficiario:</b> Enrique Villa</p>
+                <p style="margin:5px 0 0 0; font-size:11px;">*Envía captura del comprobante al finalizar.*</p>
+            </div>`;
+        }
+
+        modal.innerHTML = `
+            <button onclick="document.getElementById('capa-checkout').remove()" style="position:absolute; top:15px; right:15px; border:none; background:none; font-size:30px; cursor:pointer; color:#999;">&times;</button>
+            <h3 style="color:#111;">Resumen de Pedido</h3>
+            <p style="font-size:12px; color:#d4af37; font-weight:bold;">FOLIO: ${folioUnico}</p>
+            ${infoBancaria}
+            <div id="ticket-visual" style="background:#f9f9f9; border:1px solid #eee; border-radius:15px; padding:15px; text-align:left; font-size:13px; margin-bottom:15px; color:#333; max-height:200px; overflow-y:auto;">
+                <p>👤 <b>Cliente:</b> ${nom}</p>
+                <p>📍 <b>Envío:</b> ${dir}, ${log}</p>
+                <p>💳 <b>Pago:</b> ${metodoTexto}</p>
+                <hr style="border:0; border-top:1px dashed #ccc; margin:10px 0;">
+                <p style="white-space: pre-line;">- ${resumenDinamico}</p>
+                <p style="font-size:16px; color:#d4af37; margin-top:10px;"><b>Total: ${totalExhibido}</b></p>
+            </div>
+            <button id="btn-wsp" style="background:#25d366; color:white; width:100%; padding:18px; border:none; border-radius:15px; font-weight:bold; margin-top:15px; cursor:pointer;">ENVIAR A WHATSAPP 📲</button>`;
+
+        document.getElementById('btn-wsp').onclick = function() {
+            const msg = `📦 *AXTELIX SHOP - PEDIDO*\n🆔 *FOLIO:* ${folioUnico}\n\n👤 *Cliente:* ${nom}\n📍 *Dirección:* ${dir}, ${log}\n🏠 *Ref:* ${ref}\n💰 *Total:* ${totalExhibido}\n💳 *Método:* ${metodoTexto}\n\n🛍️ *Items:* \n- ${resumenDinamico}`;
+            window.open(`https://wa.me/527206181781?text=${encodeURIComponent(msg)}`, "_blank");
+            checkoutCapa.remove();
+        };
+    };
+};
+
+// --- SINCRONIZACIÓN CON RENDER ---
+const URL_SINCRO = "https://axtelix-backend.onrender.com/obtener-inventario";
+
+async function actualizarInventarioReal() {
+    console.log("Iniciando sincronización Axtelix...");
+    const loader = document.getElementById('loader-axtelix');
+    const wspBtn = document.querySelector('.joinchat, .whatsapp-button');
+
+    try {
+        const respuesta = await fetch(URL_SINCRO + "?v=" + Date.now());
+        const datosNuevos = await respuesta.json();
+
+        if (datosNuevos && datosNuevos.length > 0) {
+            PERFUMERIA = []; TECNOLOGIA = []; CALZADO = []; SOFTWARE = [];
+            datosNuevos.forEach(p => {
+                const catExcel = p.Categoria ? p.Categoria.toLowerCase().trim() : '';
+                const item = { nombre: p.Producto, precio: parseFloat(p.Precio_Venta), img: p.Imagen_URL, desc: p.Descripcion, stock: p.Stock, cat: p.Categoria };
+                if (catExcel.includes('perfume')) PERFUMERIA.push(item);
+                else if (catExcel.includes('tecnolog')) TECNOLOGIA.push(item);
+                else if (catExcel.includes('calzado')) CALZADO.push(item);
+                else SOFTWARE.push(item);
+            });
+            productos = [...PERFUMERIA, ...TECNOLOGIA, ...CALZADO, ...SOFTWARE];
+            if (typeof mostrarProductos === "function") mostrarProductos('todos'); 
+        }
+    } catch (e) { console.warn("Modo offline."); }
+    
+    if (loader) loader.style.display = 'none';
+    if (wspBtn) wspBtn.style.display = 'block';
+}
+
+actualizarInventarioReal();
+
+
+
+
+
+
+window.addEventListener('load', actualizarInventarioReal);
+// =======================================================
+
+    </script>
+    <a href="https://wa.me/527206181781?text=Hola%20Axtelix,%20Me%20Gustaria%20Mas%20Informacion%20Acerca%20De%20Los%20Productos%20Que%20Tienen%20Disponibles%20Actualmente" 
+   style="position:fixed; width:55px; height:55px; bottom:25px; right:25px; background-color:#25d366; color:#FFF; border-radius:50px; text-align:center; font-size:30px; box-shadow: 2px 2px 5px rgba(0,0,0,0.3); z-index:10000; display:flex; align-items:center; justify-content:center; text-decoration:none;" 
+   target="_blank">
+   <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" style="width: 35px;">
+</a>
+</body>
+</html>

@@ -71,6 +71,7 @@ def respaldo_preventa():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 # --- RUTA 4: REGISTRAR VENTAS EN SUPABASE (¡NUEVO BLINDAJE!) ---
+# --- RUTA 4: REGISTRAR VENTAS EN SUPABASE ---
 @app.route('/registrar-venta', methods=['POST'])
 def registrar_venta():
     if not SUPABASE_URL or not SUPABASE_KEY:
@@ -84,12 +85,14 @@ def registrar_venta():
             "Prefer": "return=minimal"
         }
         
-        # OJO AQUÍ: Estoy asumiendo que tu tabla en Supabase se llama "ventas"
-        url_supabase = f"{SUPABASE_URL}/rest/v1/ventas" 
+        # CAMBIO CLAVE: Cambiamos "ventas" por "pedidos" para que coincida con tu Supabase
+        url_supabase = f"{SUPABASE_URL}/rest/v1/pedidos" 
         
         respuesta = requests.post(url_supabase, json=datos_venta, headers=headers, timeout=10)
         
         if respuesta.status_code >= 400:
+             # Esto nos dirá exactamente qué columna está mal si falla
+             print(f"Error de Supabase: {respuesta.text}")
              return jsonify({"status": "error", "message": respuesta.text}), respuesta.status_code
              
         return jsonify({"status": "success", "mensaje": "Venta asegurada en Supabase"}), 200

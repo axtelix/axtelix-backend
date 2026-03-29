@@ -85,7 +85,6 @@ def registrar_venta():
         }
         
         # OJO AQUÍ: Estoy asumiendo que tu tabla en Supabase se llama "ventas"
-        # Si se llama diferente (ej. "pedidos"), cambia la palabra "ventas" aquí abajo:
         url_supabase = f"{SUPABASE_URL}/rest/v1/ventas" 
         
         respuesta = requests.post(url_supabase, json=datos_venta, headers=headers, timeout=10)
@@ -98,6 +97,65 @@ def registrar_venta():
     except Exception as e:
         print(f"❌ Error al registrar en Supabase: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
+
+# =========================================================
+# --- RUTAS DE RESEÑAS (AXTELIX ENGINE) ---
+# =========================================================
+
+@app.route('/obtener-reviews', methods=['GET'])
+def obtener_reviews():
+    if not SUPABASE_URL or not SUPABASE_KEY:
+        return jsonify({"error": "Configuración faltante"}), 500
+    url = f"{SUPABASE_URL}/rest/v1/reviews?order=created_at.desc"
+    headers = {"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"}
+    try:
+        res = requests.get(url, headers=headers, timeout=10)
+        return jsonify(res.json()), res.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/guardar-review', methods=['POST'])
+def guardar_review():
+    url = f"{SUPABASE_URL}/rest/v1/reviews"
+    headers = {
+        "apikey": SUPABASE_KEY, 
+        "Authorization": f"Bearer {SUPABASE_KEY}", 
+        "Content-Type": "application/json", 
+        "Prefer": "return=representation"
+    }
+    try:
+        res = requests.post(url, headers=headers, json=request.json, timeout=10)
+        return jsonify(res.json()), res.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/votar-review', methods=['POST'])
+def votar_review():
+    datos = request.json
+    url = f"{SUPABASE_URL}/rest/v1/reviews?id=eq.{datos['id']}"
+    headers = {
+        "apikey": SUPABASE_KEY, 
+        "Authorization": f"Bearer {SUPABASE_KEY}", 
+        "Content-Type": "application/json"
+    }
+    try:
+        res = requests.patch(url, headers=headers, json={datos['field']: datos['newValue']}, timeout=10)
+        return jsonify({"status": "ok"}), res.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/borrar-review', methods=['POST'])
+def borrar_review():
+    datos = request.json
+    url = f"{SUPABASE_URL}/rest/v1/reviews?id=eq.{datos['id']}"
+    headers = {"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"}
+    try:
+        res = requests.delete(url, headers=headers, timeout=10)
+        return jsonify({"status": "ok"}), res.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# =========================================================
 
 if __name__ == '__main__':
     puerto = int(os.environ.get("PORT", 5000))

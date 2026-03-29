@@ -9,13 +9,15 @@ app = Flask(__name__)
 # Configuración de CORS
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-# --- BÚNKER DE SEGURIDAD ---
-# Ya no hay URL real aquí. Python la buscará en la configuración de Render.
+# --- BÚNKER DE SEGURIDAD (Caja Fuerte) ---
 GOOGLE_SCRIPT_URL = os.environ.get("GOOGLE_SCRIPT_URL")
+# Nuevas llaves secretas
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 
 @app.route('/')
 def home():
-    return "Bot de Axtelix: ¡Sincronizado y búnker activado! 🛡️"
+    return "Bot de Axtelix: ¡Sincronizado y doble búnker activado (Google + Supabase)! 🛡️"
 
 # --- RUTA 1: OBTENER INVENTARIO ---
 @app.route('/obtener-inventario', methods=['GET'])
@@ -66,6 +68,35 @@ def respaldo_preventa():
         
     except Exception as e:
         print(f"❌ Error al respaldar venta: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+# --- RUTA 4: REGISTRAR VENTAS EN SUPABASE (¡NUEVO BLINDAJE!) ---
+@app.route('/registrar-venta', methods=['POST'])
+def registrar_venta():
+    if not SUPABASE_URL or not SUPABASE_KEY:
+        return jsonify({"error": "Configuración de Supabase faltante"}), 500
+    try:
+        datos_venta = request.json
+        headers = {
+            "apikey": SUPABASE_KEY,
+            "Authorization": f"Bearer {SUPABASE_KEY}",
+            "Content-Type": "application/json",
+            "Prefer": "return=minimal"
+        }
+        
+        # OJO AQUÍ: Estoy asumiendo que tu tabla en Supabase se llama "ventas"
+        # Si se llama diferente (ej. "pedidos"), cambia la palabra "ventas" aquí abajo:
+        url_supabase = f"{SUPABASE_URL}/rest/v1/ventas" 
+        
+        respuesta = requests.post(url_supabase, json=datos_venta, headers=headers, timeout=10)
+        
+        if respuesta.status_code >= 400:
+             return jsonify({"status": "error", "message": respuesta.text}), respuesta.status_code
+             
+        return jsonify({"status": "success", "mensaje": "Venta asegurada en Supabase"}), 200
+        
+    except Exception as e:
+        print(f"❌ Error al registrar en Supabase: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == '__main__':

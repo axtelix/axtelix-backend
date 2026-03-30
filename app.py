@@ -6,12 +6,11 @@ import time
 
 app = Flask(__name__)
 
-# Configuración de CORS
+# Configuración de CORS: Permite que cualquier frontend (tu HTML) se conecte sin bloqueos de seguridad
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-# --- BÚNKER DE SEGURIDAD (Caja Fuerte) ---
+# --- BÚNKER DE SEGURIDAD (Variables de Entorno) ---
 GOOGLE_SCRIPT_URL = os.environ.get("GOOGLE_SCRIPT_URL")
-# Nuevas llaves secretas
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 
@@ -19,7 +18,11 @@ SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 def home():
     return "Bot de Axtelix: ¡Sincronizado y doble búnker activado (Google + Supabase)! 🛡️"
 
-# --- RUTA 1: OBTENER INVENTARIO ---
+# =========================================================
+# --- RUTAS DE GOOGLE SHEETS (SISTEMA ANTERIOR/HÍBRIDO) ---
+# =========================================================
+
+# --- RUTA 1: OBTENER INVENTARIO (Desde Google Sheets) ---
 @app.route('/obtener-inventario', methods=['GET'])
 def obtener_inventario():
     if not GOOGLE_SCRIPT_URL:
@@ -34,7 +37,7 @@ def obtener_inventario():
         return jsonify(datos)
         
     except Exception as e:
-        print(f"Error al obtener inventario: {e}")
+        print(f"Error al obtener inventario de Google: {e}")
         return jsonify([])
 
 # --- RUTA 2: VALIDAR CUPONES ---
@@ -70,7 +73,11 @@ def respaldo_preventa():
         print(f"❌ Error al respaldar venta: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
-# --- RUTA 4: REGISTRAR VENTAS EN SUPABASE (¡NUEVO BLINDAJE!) ---
+
+# =========================================================
+# --- RUTAS DE SUPABASE (EL NUEVO MOTOR PRINCIPAL) ---
+# =========================================================
+
 # --- RUTA 4: REGISTRAR VENTAS EN SUPABASE ---
 @app.route('/registrar-venta', methods=['POST'])
 def registrar_venta():
@@ -85,13 +92,12 @@ def registrar_venta():
             "Prefer": "return=minimal"
         }
         
-        # CAMBIO CLAVE: Cambiamos "ventas" por "pedidos" para que coincida con tu Supabase
+        # Guardamos en la tabla 'pedidos'
         url_supabase = f"{SUPABASE_URL}/rest/v1/pedidos" 
         
         respuesta = requests.post(url_supabase, json=datos_venta, headers=headers, timeout=10)
         
         if respuesta.status_code >= 400:
-             # Esto nos dirá exactamente qué columna está mal si falla
              print(f"Error de Supabase: {respuesta.text}")
              return jsonify({"status": "error", "message": respuesta.text}), respuesta.status_code
              
@@ -100,6 +106,33 @@ def registrar_venta():
     except Exception as e:
         print(f"❌ Error al registrar en Supabase: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
+
+# --- RUTA 5: OBTENER PRODUCTOS DESDE SUPABASE (TABLA OFICIAL) ---
+@app.route('/obtener-productos', methods=['GET'])
+def obtener_productos():
+    if not SUPABASE_URL or not SUPABASE_KEY:
+        return jsonify({"error": "Configuración de Supabase faltante"}), 500
+    
+    try:
+        # Consultamos la tabla 'productos' ordenando por ID
+        url = f"{SUPABASE_URL}/rest/v1/productos?select=*&order=id.asc"
+        headers = {
+            "apikey": SUPABASE_KEY,
+            "Authorization": f"Bearer {SUPABASE_KEY}"
+        }
+        
+        respuesta = requests.get(url, headers=headers, timeout=10)
+        
+        if respuesta.status_code == 200:
+            return jsonify(respuesta.json()), 200
+        else:
+            print(f"Error Supabase: {respuesta.text}")
+            return jsonify({"error": "No se pudieron obtener los productos"}), respuesta.status_code
+            
+    except Exception as e:
+        print(f"❌ Error en /obtener-productos: {e}")
+        return jsonify({"error": str(e)}), 500
+
 
 # =========================================================
 # --- RUTAS DE RESEÑAS (AXTELIX ENGINE) ---
@@ -158,6 +191,9 @@ def borrar_review():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+# =========================================================
+# --- INICIO DEL SERVIDOR ---
 # =========================================================
 
 if __name__ == '__main__':

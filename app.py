@@ -7,8 +7,8 @@ import google.generativeai as genai  # <-- LIBRERÍA DE IA
 
 app = Flask(__name__)
 
-# Configuración de CORS
-CORS(app, resources={r"/*": {"origins": "*"}})
+# Cámbiala por esta versión más permisiva para tus búnkeres
+CORS(app, resources={r"/*": {"origins": "*", "allow_headers": ["Content-Type", "Authorization"]}})
 
 # --- BÚNKER DE SEGURIDAD (Variables de Entorno) ---
 GOOGLE_SCRIPT_URL = os.environ.get("GOOGLE_SCRIPT_URL")

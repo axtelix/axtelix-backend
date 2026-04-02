@@ -7,9 +7,8 @@ import google.generativeai as genai  # <-- LIBRERÍA DE IA
 
 app = Flask(__name__)
 
-# --- CORRECCIÓN CLAVE 1: CORS Totalmente Blindado ---
-# Esto evita que Render bloquee la petición diciendo "Method Not Allowed"
-CORS(app, resources={r"/*": {"origins": "*", "allow_headers": "*"}}, supports_credentials=True)
+# Configuración de CORS
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # --- BÚNKER DE SEGURIDAD (Variables de Entorno) ---
 GOOGLE_SCRIPT_URL = os.environ.get("GOOGLE_SCRIPT_URL")
@@ -39,9 +38,7 @@ def webhook_whatsapp():
         return jsonify({"error": "Falta GOOGLE_API_KEY en el servidor"}), 500
         
     try:
-        # --- CORRECCIÓN CLAVE 2: force=True ---
-        # Obliga a Python a leer los datos aunque el JS no mande los headers perfectos
-        datos = request.get_json(force=True, silent=True) or {}
+        datos = request.json
         mensaje_cliente = datos.get("mensaje", "")
         numero_cliente = datos.get("numero", "Desconocido")
         
@@ -62,10 +59,10 @@ def webhook_whatsapp():
         Aquí está tu inventario actual en tiempo real: {inventario}
         
         REGLAS ESTRICTAS:
-        1. Si piden un perfume que ESTÁ en el inventario: dales el precio y convéncelos de comprar. Y ojo, ten siempre en cuenta que los tenis dunk cuestan 790.
-        2. Si piden un producto que NO ESTÁ: diles que no lo tienes por ahora pero que lo anotarás para traerlo pronto.
-           IMPORTANTE: Si no está, debes incluir EXACTAMENTE este texto oculto al final de tu respuesta: [FALTANTE: nombre_del_producto]
-        3. Si el cliente confirma que quiere comprar: responde normalmente y pon al final: [VENTA: nombre_del_producto]
+        1. Si piden un perfume que ESTÁ en el inventario: dales el precio y convéncelos de comprar.
+        2. Si piden un perfume que NO ESTÁ: diles que no lo tienes por ahora pero que lo anotarás para traerlo pronto.
+           IMPORTANTE: Si no está, debes incluir EXACTAMENTE este texto oculto al final de tu respuesta: [FALTANTE: nombre_del_perfume]
+        3. Si el cliente confirma que quiere comprar: responde normalmente y pon al final: [VENTA: nombre_del_perfume]
         4. Usa emojis (💎, ✨, 🚀).
         """
         
@@ -88,14 +85,11 @@ def webhook_whatsapp():
             except Exception as e:
                 print("Error guardando faltante:", e)
 
-        # 5. Sistema de Alertas (Notificación de Venta)
+        # 5. Sistema de Alertas (Notificación de Venta para Luis)
         if "[VENTA:" in respuesta_ia:
-            try:
-                producto_vendido = respuesta_ia.split("[VENTA:")[1].split("]")[0].strip()
-                print(f"💰 ¡ALERTA LUIS! Posible venta cerrada de: {producto_vendido}")
-                notificacion_interna = f"💰 ¡Posible VENTA CERRADA de {producto_vendido}! Escríbele a: {numero_cliente}"
-            except Exception as e:
-                pass
+            producto_vendido = respuesta_ia.split("[VENTA:")[1].split("]")[0].strip()
+            print(f"💰 ¡ALERTA LUIS! Posible venta cerrada de: {producto_vendido}")
+            notificacion_interna = f"💰 ¡Posible VENTA CERRADA de {producto_vendido}! Escríbele a: {numero_cliente}"
 
         # 6. Limpiamos las etiquetas para que el cliente no vea los corchetes
         texto_final = respuesta_ia.split("[")[0].strip()
@@ -162,7 +156,7 @@ def respaldo_preventa():
 
 @app.route('/registrar-venta', methods=['POST'])
 def registrar_venta():
-    if not SUP উভয়_URL or not SUPABASE_KEY:
+    if not SUPABASE_URL or not SUPABASE_KEY:
         return jsonify({"error": "Configuración de Supabase faltante"}), 500
     try:
         datos_venta = request.json
